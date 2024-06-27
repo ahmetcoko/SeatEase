@@ -6,7 +6,6 @@ import 'package:seat_ease/utils/customTextStyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
 
@@ -15,25 +14,37 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String email = '', fullname = '', username = '', password = '', confirmPassword = '';  // Changed to initial empty strings
-  final formkey = GlobalKey<FormState>();
-  final firebaseAuth = FirebaseAuth.instance;
-  final authService = FirebaseAuth.instance;
+  String email = '', fullname = '', username = '', password = '', confirmPassword = '';
+  final GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
+  // Controllers for text fields
+  TextEditingController emailController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+
+  // Validation flags
+  bool emailValid = false;
+  bool fullNameValid = false;
+  bool usernameValid = false;
+  bool passwordValid = false;
+  bool confirmPasswordValid = false;
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     String topImage = "assets/images/topImage.png";
     return Scaffold(
-      body: appBody(height, topImage),
+      body: SafeArea(  // Ensure content does not overlap with system status or navigation bars
+        child: appBody(height, topImage),
+      ),
     );
   }
 
   SingleChildScrollView appBody(double height, String topImage) {
     return SingleChildScrollView(
+      padding: EdgeInsets.only(bottom: 20), // Add padding to ensure content is above any system UI or watermarks
       child: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,11 +67,12 @@ class _SignUpState extends State<SignUp> {
                     customSizedBox(),
                     passwordTextField(),
                     customSizedBox(),
-                    confirmPasswordTextField(),  // Add this method call here
+                    confirmPasswordTextField(),
+                    validationInfo(),
                     customSizedBox(),
                     signUpButton(),
-                    customSizedBox(),
-                    backToLoginPage()
+                    customSizedBox(height: 48), // Increased space before the bottom navigation or watermark
+                    backToLoginPage(),
                   ],
                 ),
               ),
@@ -71,95 +83,52 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Text titleText() {
+
+
+  Widget titleText() {
     return Text(
       "Merhaba, \nHosgeldin",
       style: CustomTextStyle.titleTextStyle,
     );
   }
 
-  TextFormField confirmPasswordTextField() {
-    return TextFormField(
-      controller: confirmPasswordController,
-      validator: (value) => confirmPasswordValidator(value, passwordController.text),
-      obscureText: true,
-      style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Confirm Password"),
-      onSaved: (value) => confirmPassword = value!,  // Add this line
-    );
-  }
+  Widget customSizedBox({double height = 20.0}) => SizedBox(height: height);
 
 
-  TextFormField emailTextField() {
+  Widget emailTextField() {
     return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Bilgileri Eksiksiz Doldurunuz";
-        } else {}
-      },
-      onSaved: (value) {
-        email = value!;
-      },
+      controller: emailController,
+      validator: (value) => emailValidator(value),
       style: TextStyle(color: Colors.white),
       decoration: customInputDecoration("Email"),
+      onSaved: (value) => email = value!,
     );
   }
 
-  TextFormField fullNameTextField() {
+  Widget fullNameTextField() {
     return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Bilgileri Eksiksiz Doldurunuz";
-        } else {}
-      },
-      onSaved: (value) {
-        fullname = value!;
-      },
+      controller: fullNameController,
+      validator: (value) => fullNameValidator(value),
       style: TextStyle(color: Colors.white),
       decoration: customInputDecoration("Ad Soyad"),
+      onSaved: (value) => fullname = value!,
     );
   }
 
-  TextFormField usernameTextField() {
+  Widget usernameTextField() {
     return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Bilgileri Eksiksiz Doldurunuz";
-        } else {}
-      },
-      onSaved: (value) {
-        username = value!;
-      },
+      controller: usernameController,
+      validator: (value) => usernameValidator(value),
       style: TextStyle(color: Colors.white),
       decoration: customInputDecoration("Kullanici Adi"),
+      onSaved: (value) => username = value!,
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Setup listeners to trigger form validation on change
-    passwordController.addListener(validatePassword);
-    confirmPasswordController.addListener(validatePassword);
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  void validatePassword() {
-    // Trigger validation logic for confirmPassword field
-    formkey.currentState?.validate();
-  }
-
-  TextFormField passwordTextField() {
+  Widget passwordTextField() {
     return TextFormField(
       controller: passwordController,
-      validator: passwordValidator,
+      validator: (value) => passwordValidator(value),
       obscureText: true,
       style: TextStyle(color: Colors.white),
       decoration: customInputDecoration("Şifre"),
@@ -167,141 +136,63 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Center signUpButton() {
-    return Center(
-      child: TextButton(
-        onPressed: signUp,
-        child: customText(
-          "Hesap Olustur",
-          CustomColors.pinkColor,
-        ),
-      ),
+  Widget confirmPasswordTextField() {
+    return TextFormField(
+      controller: confirmPasswordController,
+      validator: (value) => confirmPasswordValidator(value, passwordController.text),
+      obscureText: true,
+      style: TextStyle(color: Colors.white),
+      decoration: customInputDecoration("Confirm Password"),
+      onSaved: (value) => confirmPassword = value!,
     );
   }
 
-  void signUp() async {
-    if (formkey.currentState!.validate()) { // Check if form inputs pass the validation rules
-      formkey.currentState!.save(); // Save the form data to the respective variables
-
-      // Check if the passwords match, ensuring `password` and `confirmPassword` are not empty
-      if (password.isNotEmpty && confirmPassword.isNotEmpty && confirmPassword == password) {
-        try {
-          // Attempt to create a user with the provided email and password
-          UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email,
-            password: password,
-          );
-
-          // Upon successful user creation, store additional user details in Firestore
-          FirebaseFirestore.instance.collection('Users').doc(userCredential.user!.uid).set({
-            'fullname': fullname,
-            'username': username,
-            'email': email,
-          }).then((value) {
-            // Navigate to the LoginPage after successful registration and data storage
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => LoginPage()),
-                  (route) => false,
-            );
-          }).catchError((error) {
-            // Handle errors related to Firestore operations
-            print("Failed to add user to Firestore: $error");
-            showErrorDialog("Error saving data", "Failed to save user details.");
-          });
-
-        } on FirebaseAuthException catch (e) {
-          // Handle errors related to Firebase authentication
-          if (e.code == 'weak-password') {
-            showErrorDialog("Weak Password", "The password provided is too weak.");
-          } else if (e.code == 'email-already-in-use') {
-            showErrorDialog("Email Already in Use", "The account already exists for that email.");
-          } else {
-            showErrorDialog("Authentication Error", e.message ?? "An unexpected error occurred.");
-          }
-        } catch (e) {
-          // Handle any other errors that might occur
-          showErrorDialog("Error", e.toString());
-        }
-      } else {
-        // Handle the case where passwords do not match
-        showErrorDialog("Password Mismatch", "The passwords do not match. Please try again.");
-      }
-    }
+  Widget validationInfo() {
+    return Column(
+      children: [
+        buildValidationRow("Password must be at least 6 characters.", passwordValid),
+        buildValidationRow("Passwords must match.", confirmPasswordValid),
+        buildValidationRow("Email must contain '@'.", emailValid),
+        buildValidationRow("Full Name must be within 20 characters and contain a space.", fullNameValid),
+        buildValidationRow("Username must be within 20 characters.", usernameValid),
+      ],
+    );
   }
 
-  void showErrorDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("OK"),
-            ),
-          ],
-        );
-      },
+  Widget buildValidationRow(String text, bool isValid) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded( // Wrap the text with Expanded
+          child: Text(text, style: TextStyle(color: Colors.grey[600])),
+        ),
+        Icon(isValid ? Icons.check : Icons.close, color: isValid ? Colors.green : Colors.red),
+      ],
     );
   }
 
 
-
-
-
-  Center backToLoginPage() {
-    return Center(
-      child: TextButton(
-        onPressed: () => Navigator.pushNamed(context, "/loginPage"),
-        child: customText(
-          "Giris Sayfasina Geri Don",
-          CustomColors.pinkColor,
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(() => setState(() => emailValid = emailValidator(emailController.text) == null));
+    fullNameController.addListener(() => setState(() => fullNameValid = fullNameValidator(fullNameController.text) == null));
+    usernameController.addListener(() => setState(() => usernameValid = usernameValidator(usernameController.text) == null));
+    passwordController.addListener(() => setState(() => passwordValid = passwordValidator(passwordController.text) == null));
+    confirmPasswordController.addListener(() => setState(() => confirmPasswordValid = confirmPasswordValidator(confirmPasswordController.text, passwordController.text) == null));
   }
 
-  Container topImageContainer(double height, String topImage) {
-    return Container(
-      height: height * .25,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(topImage),
-        ),
-      ),
-    );
+  @override
+  void dispose() {
+    emailController.dispose();
+    fullNameController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
-  Widget customSizedBox() => SizedBox(
-    height: 20,
-  );
-
-  Widget customText(String text, Color color) => Text(
-    text,
-    style: TextStyle(color: color),
-  );
-
-  InputDecoration customInputDecoration(String hintText) {
-    return InputDecoration(
-      hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey),
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.grey,
-        ),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.grey,
-        ),
-      ),
-    );
-  }
-
-  // Email Validator
+  // Validators
   String? emailValidator(String? value) {
     if (value!.isEmpty || !value.contains("@")) {
       return "Please enter a valid email with '@'.";
@@ -309,7 +200,6 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
-// Full Name Validator
   String? fullNameValidator(String? value) {
     if (value!.isEmpty || !value.contains(" ") || value.length > 20) {
       return "Full Name should include a space and be max 20 characters.";
@@ -317,7 +207,6 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
-// Username Validator
   String? usernameValidator(String? value) {
     if (value!.isEmpty || value.length > 20) {
       return "Username should be max 20 characters.";
@@ -325,7 +214,6 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
-// Password Validator
   String? passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a password.';
@@ -344,12 +232,82 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
-  Widget validationIcon(bool isValid) {
-    String iconName = isValid ? 'assets/tick.png' : 'assets/cross.png';
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: Image.asset(iconName, width: 20, height: 20),
+  Widget signUpButton() {
+    return Center(
+      child: TextButton(
+        onPressed: signUp,
+        child: customText("Hesap Olustur", CustomColors.pinkColor),
+      ),
     );
   }
 
+  void signUp() async {
+    if (formkey.currentState!.validate()) {
+      formkey.currentState!.save();
+      try {
+        // Create user with email and password
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        // Save additional details in Firestore under the 'Users' collection
+        FirebaseFirestore.instance.collection('Users').doc(userCredential.user!.uid).set({
+          'fullname': fullname,
+          'username': username,
+          'email': email,
+          // Any other user details you might want to save
+        }).then((value) {
+          print("User Added to Firestore");
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LoginPage()),
+                (route) => false,
+          );
+        }).catchError((error) {
+          print("Failed to add user: $error");
+        });
+
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Widget backToLoginPage() {
+    return Center(
+      child: TextButton(
+        onPressed: () => Navigator.pushNamed(context, "/loginPage"),
+        child: customText("Giris Sayfasina Geri Don", CustomColors.pinkColor),
+      ),
+    );
+  }
+
+  Widget customText(String text, Color color) => Text(text, style: TextStyle(color: color));
+
+  InputDecoration customInputDecoration(String hintText) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(color: Colors.grey),
+      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+    );
+  }
+
+  Container topImageContainer(double height, String topImage) {
+    return Container(
+      height: height * .25,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage(topImage),
+        ),
+      ),
+    );
+  }
 }
