@@ -148,29 +148,38 @@ class _LoginPageState extends State<LoginPage> {
   void signIn() async {
     if (formkey.currentState!.validate()) {
       formkey.currentState!.save();
-      final result = await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-      if (result == "success") {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomePage()),
-                (route) => false);
-      } else {
+      try {
+        UserCredential result = await firebaseAuth.signInWithEmailAndPassword(
+            email: email, password: password);
+        if (result.user != null) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false);
+        }
+      } on FirebaseAuthException catch (e) {
+        String errorMessage = "An error occurred";
+        if (e.code == 'user-not-found') {
+          errorMessage = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Wrong password provided for that user.';
+        }
         showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text("Hata"),
-                content: Text(result! as String),
+                title: Text("Login Error"),
+                content: Text(errorMessage),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text("Geri Don"))
+                      child: Text("OK"))
                 ],
               );
             });
       }
     }
   }
+
 
   Center signUpButton() {
     return Center(
