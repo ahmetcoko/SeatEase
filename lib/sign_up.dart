@@ -87,7 +87,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget titleText() {
     return Text(
-      "Merhaba, \nHosgeldin",
+      "Welcome, to ,\nSetEase!",
       style: CustomTextStyle.titleTextStyle,
     );
   }
@@ -110,7 +110,7 @@ class _SignUpState extends State<SignUp> {
       controller: fullNameController,
       validator: (value) => fullNameValidator(value),
       style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Ad Soyad"),
+      decoration: customInputDecoration("Fullname"),
       onSaved: (value) => fullname = value!,
     );
   }
@@ -120,7 +120,7 @@ class _SignUpState extends State<SignUp> {
       controller: usernameController,
       validator: (value) => usernameValidator(value),
       style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Kullanici Adi"),
+      decoration: customInputDecoration("Username"),
       onSaved: (value) => username = value!,
     );
   }
@@ -131,7 +131,7 @@ class _SignUpState extends State<SignUp> {
       validator: (value) => passwordValidator(value),
       obscureText: true,
       style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Şifre"),
+      decoration: customInputDecoration("Password"),
       onSaved: (value) => password = value!,
     );
   }
@@ -236,7 +236,7 @@ class _SignUpState extends State<SignUp> {
     return Center(
       child: TextButton(
         onPressed: signUp,
-        child: customText("Hesap Olustur", CustomColors.pinkColor),
+        child: customText("Create Account", CustomColors.pinkColor),
       ),
     );
   }
@@ -283,7 +283,7 @@ class _SignUpState extends State<SignUp> {
     return Center(
       child: TextButton(
         onPressed: () => Navigator.pushNamed(context, "/loginPage"),
-        child: customText("Giris Sayfasina Geri Don", CustomColors.pinkColor),
+        child: customText("Back to Log-in page", CustomColors.pinkColor),
       ),
     );
   }
