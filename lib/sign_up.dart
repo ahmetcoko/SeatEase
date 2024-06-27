@@ -87,7 +87,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget titleText() {
     return Text(
-      "Welcome, to ,\nSetEase!",
+      "Welcome to \n    SetEase",
       style: CustomTextStyle.titleTextStyle,
     );
   }

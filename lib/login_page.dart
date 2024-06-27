@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_ease/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
 import 'package:seat_ease/widgets/custom_text_button.dart';
@@ -67,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Text titleText() {
     return Text(
-      "Welcome to   \nSeatEase",
+      "Welcome to \n    SetEase",
       style: CustomTextStyle.titleTextStyle,
     );
   }
@@ -76,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Bilgileri Eksiksiz Doldurunuz";
+          return "Check your credentials";
         } else {}
       },
       onSaved: (value) {
@@ -91,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Bilgileri Eksiksiz Doldurunuz";
+          return "Check your credentials";
         } else {}
       },
       onSaved: (value) {
@@ -106,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
   Center forgotPasswordButton() {
     return Center(
       child: TextButton(
-        onPressed: () {},
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage())),
         child: customText(
           "Forgot Password?",
           CustomColors.pinkColor,
@@ -157,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context) {
               return AlertDialog(
                 title: Text("Login Error"),
-                content: Text(errorMessage),
+                content: Text(errorMessage +"." +" Please try again"),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context),
