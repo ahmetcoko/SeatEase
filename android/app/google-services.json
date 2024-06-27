@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "134973073580",
+    "project_id": "seatease-a3812",
+    "storage_bucket": "seatease-a3812.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134973073580:android:2368a78e97ea8afa145709",
+        "android_client_info": {
+          "package_name": "com.example.seat_ease"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2nqwPWhz-kQyBIS-IsX-3dYSSqeTinsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
