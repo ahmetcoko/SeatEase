@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:seat_ease/sign_up.dart';
-import 'package:seat_ease/tab_bar_controller.dart';
+import 'package:seat_ease/views/sign_up.dart';
+import 'package:seat_ease/main_dir/tab_bar_controller.dart';
 import 'package:seat_ease/utils/customColors.dart';
-import 'firebase_options.dart';
-import 'home_page.dart';
-import 'login_page.dart';
+import '../service/firebase_options.dart';
+import '../views/home_page.dart';
+import '../views/login_page.dart';
 
 
 void main() async {
