@@ -55,17 +55,6 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () => Navigator.pushNamed(context, "/signUp"),
                       buttonText: "Create Account",
                     ),
-                    CustomTextButton(
-                        onPressed: () async {
-                          final result = await firebaseAuth.signInAnonymously();
-                          if (result != null) {
-                            Navigator.pushReplacementNamed(
-                                context, "/homePage");
-                          } else {
-                            print("Hata ile karsilasildi");
-                          }
-                        },
-                        buttonText: "Misafir Girisi")
                   ],
                 ),
               ),
