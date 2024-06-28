@@ -49,7 +49,7 @@ class _AdminPageState extends State<AdminPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.pinkAccent,
         onTap: _onItemTapped,
       ),
     );
