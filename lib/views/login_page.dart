@@ -126,22 +126,26 @@ class _LoginPageState extends State<LoginPage> {
 
   Center signInButton() {
     return Center(
-      child: TextButton(
+      child: ElevatedButton(
         onPressed: signIn,
-        child: Container(
-          height: 50,
-          width: 150,
-          margin: EdgeInsets.symmetric(horizontal: 60),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: Color(0xff31274F)),
-          child: Center(
-            child: customText("Log-in", CustomColors.loginButtonTextColor),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor, // Using the primary color from the theme
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          minimumSize: Size(150, 50),
+        ),
+        child: Text(
+          "Log-in",
+          style: TextStyle(
+            color: Colors.pinkAccent, // Assuming you want white text for better contrast
           ),
         ),
       ),
     );
   }
+
+
 
   void signIn() async {
     if (formkey.currentState!.validate()) {

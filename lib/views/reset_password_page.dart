@@ -25,7 +25,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             children: <Widget>[
               TextFormField(
                 controller: _emailController,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
                 decoration: customInputDecoration("Email"),
                 validator: (value) {
                   if (value == null || value.isEmpty || !value.contains('@')) {
@@ -37,14 +37,28 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _sendResetEmail,
-                child: Text('Send Reset Mail'),
-              ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor, // Use the primary color from your theme
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50), // Rounded corners
+                  ),
+                  minimumSize: Size(150, 50), // Minimum size
+                ),
+                child: Text(
+                  'Send Reset Mail',
+                  style: TextStyle(
+                    color: Colors.pinkAccent, // Ensure text color is pinkAccent
+                  ),
+                ),
+              )
+
             ],
           ),
         ),
       ),
     );
   }
+
 
   void _sendResetEmail() async {
     if (_formKey.currentState!.validate()) {

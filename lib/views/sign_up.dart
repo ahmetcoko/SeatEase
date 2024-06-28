@@ -234,12 +234,25 @@ class _SignUpState extends State<SignUp> {
 
   Widget signUpButton() {
     return Center(
-      child: TextButton(
+      child: ElevatedButton(
         onPressed: signUp,
-        child: customText("Create Account", CustomColors.pinkColor),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor, // Use secondary color from theme
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          minimumSize: Size(150, 50),
+        ),
+        child: Text(
+          "Create Account",
+          style: TextStyle(
+            color: Colors.pinkAccent, // Ensuring text is visible against the button color
+          ),
+        ),
       ),
     );
   }
+
 
   void signUp() async {
     if (formkey.currentState!.validate()) {
