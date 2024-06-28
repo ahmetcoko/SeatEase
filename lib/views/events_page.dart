@@ -11,10 +11,7 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> {
   Future<void> _refreshEvents() async {
-    setState(() {
-      // This is just a placeholder to visually refresh the page.
-      // The StreamBuilder will automatically update the data based on the stream it's listening to.
-    });
+    setState(() {});
   }
 
   @override
@@ -41,19 +38,10 @@ class _EventsPageState extends State<EventsPage> {
                 bool isAvailable = data['participants'].length < data['capacity'];
                 return Card(
                   child: ExpansionTile(
-                    leading: Image.asset('assets/images/event.png', width: 40), // Event icon
-                    title: Text(
-                      data['name'],
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      "Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
-                      style: TextStyle(fontWeight: FontWeight.normal),
-                    ),
-                    trailing: Image.asset(
-                      isAvailable ? 'assets/images/available.png' : 'assets/images/cross.png',
-                      width: 24,
-                    ),
+                    leading: Image.asset('assets/images/event.png', width: 40),
+                    title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text("Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}", style: TextStyle(fontWeight: FontWeight.normal)),
+                    trailing: Image.asset(isAvailable ? 'assets/images/available.png' : 'assets/images/cross.png', width: 24),
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -61,11 +49,24 @@ class _EventsPageState extends State<EventsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 10),
                             Text(data['description']),
-                            SizedBox(height: 10),
+                            SizedBox(height: 20),
                             Text("Participants", style: TextStyle(fontWeight: FontWeight.bold)),
                             ...data['participants'].map<Widget>((name) => Text(name)).toList(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => _selectDate(context, document.id),
+                                  child: Text("Change Date-Time"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => _deleteEvent(document.id),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  child: Text("Delete Event"),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -80,8 +81,30 @@ class _EventsPageState extends State<EventsPage> {
     );
   }
 
+  void _selectDate(BuildContext context, String docId) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        DateTime fullDateTime = DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
+        FirebaseFirestore.instance.collection('Events').doc(docId).update({
+          'time': fullDateTime,
+        });
+      }
+    }
+  }
 
-
+  void _deleteEvent(String docId) {
+    FirebaseFirestore.instance.collection('Events').doc(docId).delete();
+  }
 
 
   Stream<List<Event>> streamEvents() {
