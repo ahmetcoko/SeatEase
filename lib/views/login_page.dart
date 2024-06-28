@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:seat_ease/views/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
 import 'package:seat_ease/widgets/custom_text_button.dart';
+import 'admin_page.dart';
 import 'home_page.dart';
 
 
@@ -69,21 +71,25 @@ class _LoginPageState extends State<LoginPage> {
   Text titleText() {
     return Text(
       "Welcome to \n    SetEase",
-      style: CustomTextStyle.titleTextStyle,
+      style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
     );
   }
+
 
   TextFormField emailTextField() {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Check your credentials";
-        } else {}
+          return "Please enter your email.";
+        } else if (!value.contains('@')) {
+          return "Enter a valid email address.";
+        }
+        return null;
       },
       onSaved: (value) {
         email = value!;
       },
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Ensuring text color is black for visibility
       decoration: customInputDecoration("Email"),
     );
   }
@@ -92,17 +98,19 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Check your credentials";
-        } else {}
+          return "Please enter your password.";
+        }
+        return null;
       },
       onSaved: (value) {
         password = value!;
       },
       obscureText: true,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Ensuring text color is black for visibility
       decoration: customInputDecoration("Password"),
     );
   }
+
 
   Center forgotPasswordButton() {
     return Center(
@@ -142,9 +150,18 @@ class _LoginPageState extends State<LoginPage> {
         UserCredential result = await firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
         if (result.user != null) {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => HomePage()),
-                  (route) => false);
+          // Fetch user type from Firestore and cast the data
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(result.user!.uid).get();
+          Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+          if (userDoc.exists && userData['usertype'] == 'admin') {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => AdminPage()),
+                    (route) => false);
+          } else {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => HomePage()),
+                    (route) => false);
+          }
         }
       } on FirebaseAuthException catch (e) {
         String errorMessage = "An error occurred";
@@ -158,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context) {
               return AlertDialog(
                 title: Text("Login Error"),
-                content: Text(errorMessage +"." +" Please try again"),
+                content: Text(errorMessage + " Please try again."),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -169,6 +186,8 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
+
 
 
   Center signUpButton() {

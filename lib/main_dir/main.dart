@@ -4,6 +4,7 @@ import 'package:seat_ease/views/sign_up.dart';
 import 'package:seat_ease/main_dir/tab_bar_controller.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import '../service/firebase_options.dart';
+import '../utils/app_theme.dart';
 import '../views/home_page.dart';
 import '../views/login_page.dart';
 
@@ -28,11 +29,8 @@ class MyApp extends StatelessWidget {
         "/signUp": (context) => SignUp(),
         "/homePage": (context) => HomePage()
       },
-      theme: ThemeData(
-          scaffoldBackgroundColor: CustomColors.darkColor,
-          appBarTheme: AppBarTheme(color: CustomColors.pinkColor)
-      ),
-      home: LoginPage(),  // Set LoginPage as the initial route
+      theme: AppTheme.lightTheme,
+      home: LoginPage(),  // initial route
     );
   }
 }

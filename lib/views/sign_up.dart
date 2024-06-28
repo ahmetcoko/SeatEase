@@ -85,63 +85,63 @@ class _SignUpState extends State<SignUp> {
 
 
 
-  Widget titleText() {
+  Text titleText() {
     return Text(
       "Welcome to \n    SetEase",
-      style: CustomTextStyle.titleTextStyle,
+      style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
     );
   }
 
   Widget customSizedBox({double height = 20.0}) => SizedBox(height: height);
 
 
-  Widget emailTextField() {
+  TextFormField emailTextField() {
     return TextFormField(
       controller: emailController,
-      validator: (value) => emailValidator(value),
-      style: TextStyle(color: Colors.white),
+      validator: emailValidator,
+      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
       decoration: customInputDecoration("Email"),
       onSaved: (value) => email = value!,
     );
   }
 
-  Widget fullNameTextField() {
+  TextFormField fullNameTextField() {
     return TextFormField(
       controller: fullNameController,
-      validator: (value) => fullNameValidator(value),
-      style: TextStyle(color: Colors.white),
-      decoration: customInputDecoration("Fullname"),
+      validator: fullNameValidator,
+      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
+      decoration: customInputDecoration("Full Name"),
       onSaved: (value) => fullname = value!,
     );
   }
 
-  Widget usernameTextField() {
+  TextFormField usernameTextField() {
     return TextFormField(
       controller: usernameController,
-      validator: (value) => usernameValidator(value),
-      style: TextStyle(color: Colors.white),
+      validator: usernameValidator,
+      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
       decoration: customInputDecoration("Username"),
       onSaved: (value) => username = value!,
     );
   }
 
-  Widget passwordTextField() {
+  TextFormField passwordTextField() {
     return TextFormField(
       controller: passwordController,
-      validator: (value) => passwordValidator(value),
+      validator: passwordValidator,
       obscureText: true,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
       decoration: customInputDecoration("Password"),
       onSaved: (value) => password = value!,
     );
   }
 
-  Widget confirmPasswordTextField() {
+  TextFormField confirmPasswordTextField() {
     return TextFormField(
       controller: confirmPasswordController,
       validator: (value) => confirmPasswordValidator(value, passwordController.text),
       obscureText: true,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
       decoration: customInputDecoration("Confirm Password"),
       onSaved: (value) => confirmPassword = value!,
     );
@@ -294,9 +294,13 @@ class _SignUpState extends State<SignUp> {
   InputDecoration customInputDecoration(String hintText) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey),
-      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      hintStyle: TextStyle(color: Colors.grey),  // Hint text color
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.pinkAccent),
+      ),
     );
   }
 
