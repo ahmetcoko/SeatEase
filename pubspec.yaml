@@ -53,10 +53,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-
   assets:
-    - assets/images/
+    - assets/images/available.png
+    - assets/images/cross.png
+    - assets/images/event.png
 
 
   # The following line ensures that the Material Icons font is

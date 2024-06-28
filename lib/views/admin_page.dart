@@ -36,7 +36,7 @@ class _AdminPageState extends State<AdminPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.event),
+            icon: Icon(Icons.event), // Adjust the size as needed
             label: 'Events',
           ),
           BottomNavigationBarItem(

@@ -150,7 +150,7 @@ class _CreateEventState extends State<CreateEvent> {
           'capacity': int.parse(_capacityController.text),
           'time': eventDateTime,
           'description': _descriptionController.text,
-          'reserved': 0,
+          'participants': [],  // Initialize an empty list for participants
         }).then((result) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Event created successfully')));
           // Clear the form
