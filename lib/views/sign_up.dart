@@ -256,6 +256,7 @@ class _SignUpState extends State<SignUp> {
           'fullname': fullname,
           'username': username,
           'email': email,
+          'usertype': 'normalUser',
           // Any other user details you might want to save
         }).then((value) {
           print("User Added to Firestore");
