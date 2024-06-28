@@ -57,6 +57,7 @@ flutter:
     - assets/images/available.png
     - assets/images/cross.png
     - assets/images/event.png
+    - assets/images/topImage.png
 
 
   # The following line ensures that the Material Icons font is
