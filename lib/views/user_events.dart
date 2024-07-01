@@ -104,7 +104,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                       ),
                       child: Text(
                         date.day.toString(),
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Colors.blue[200]),
                       ),
                     );
                   } else {
@@ -158,49 +158,6 @@ class _UserEventsPageState extends State<UserEventsPage> {
                           children: <Widget>[
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () => _changeDateTime(context, document.id),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    minimumSize: Size(150, 50),
-                                  ),
-                                  child: Text(
-                                    "Change Date-Time",
-                                    style: TextStyle(color: Colors.pinkAccent),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () => _deleteEvent(document.id),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    minimumSize: Size(150, 50),
-                                  ),
-                                  child: Text(
-                                    "Delete Event",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
-                                  Text(data['description'] ?? 'No description provided'),
-                                  SizedBox(height: 10),
-                                  Text("Participants", style: TextStyle(fontWeight: FontWeight.bold)),
-                                  ..._buildParticipantWidgets(data['participants']),
-                                ],
-                              ),
                             ),
                             // Here we integrate the seat grid
                             Padding(
@@ -272,7 +229,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.blue[400],
+        color: Colors.blue[300],
       ),
       width: 20.0,
       height: 20.0,
@@ -287,72 +244,6 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ),
     );
   }
-
-
-
-
-
-  List<Widget> _buildParticipantWidgets(List<dynamic> participants) {
-    return participants.map<Widget>((participant) {
-      if (participant is Map<String, dynamic>) {
-        return Text("${participant['name']} - Seat: ${participant['seat']}");
-      } else if (participant is String) {
-        // Handle the case where a participant is a String
-        return Text(participant);
-      } else {
-        // Handle the case where a participant is neither a Map nor a String
-        return Text('Unknown participant type');
-      }
-    }).toList();
-  }
-
-  void _changeDateTime(BuildContext context, String eventId) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _editingDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: _editingTime ?? TimeOfDay.now(),
-    );
-
-    if (pickedDate != null && pickedTime != null) {
-      // Combine the date and time into one DateTime object
-      DateTime eventDateTime = DateTime(
-        pickedDate.year,
-        pickedDate.month,
-        pickedDate.day,
-        pickedTime.hour,
-        pickedTime.minute,
-      );
-
-      // Update the event in Firestore
-      await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
-        'time': eventDateTime,
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Event date-time updated successfully')),
-      );
-    }
-  }
-
-  void _deleteEvent(String eventId) async {
-    await FirebaseFirestore.instance.collection('Events').doc(eventId).delete();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Event deleted successfully')),
-    );
-  }
-
-
-  Stream<List<Event>> streamEvents() {
-    return FirebaseFirestore.instance.collection('Events').snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => Event.fromFirestore(doc.data() as Map<String, dynamic>)).toList()
-    );
-  }
-
 }
 
 

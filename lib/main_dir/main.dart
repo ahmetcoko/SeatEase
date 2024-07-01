@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:seat_ease/views/sign_up.dart';
-import 'package:seat_ease/main_dir/tab_bar_controller.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import '../service/firebase_options.dart';
 import '../utils/app_theme.dart';
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'SeatEase',
       routes: {
         "/loginPage": (context) => LoginPage(),
         "/signUp": (context) => SignUp(),
