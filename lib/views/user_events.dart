@@ -88,17 +88,18 @@ class _UserEventsPageState extends State<UserEventsPage> {
                   }
                 },
                 defaultBuilder: (context, date, _) {
-                  if (_events[date] != null && _events[date]!.isNotEmpty) {
+                  DateTime dateKey = DateTime(date.year, date.month, date.day);
+                  if (_events[dateKey] != null && _events[dateKey]!.isNotEmpty) {
                     return Container(
                       margin: const EdgeInsets.all(4.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Colors.orange.shade100, // Change color to indicate selection
+                        color: Colors.blue.shade100, // Change color to indicate an event
                         borderRadius: BorderRadius.circular(50.0),
                       ),
                       child: Text(
                         date.day.toString(),
-                        style: TextStyle(color: Colors.blue[200]),
+                        style: TextStyle(color: Colors.white),
                       ),
                     );
                   } else {
@@ -180,7 +181,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
     return Container(
       margin: EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: isOccupied ? Colors.white : Colors.blue,
+        color: isOccupied ? Colors.red.shade800 : Colors.green.shade200,
         border: Border.all(color: Colors.black),
       ),
     );
@@ -223,7 +224,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.blue[300],
+        color: Colors.blue[200],
       ),
       width: 20.0,
       height: 20.0,
