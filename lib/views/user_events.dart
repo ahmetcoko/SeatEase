@@ -71,13 +71,13 @@ class _UserEventsPageState extends State<UserEventsPage> {
             TableCalendar(
               firstDay: DateTime.utc(2010, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: DateTime.now(),
+              focusedDay: focusedDay!,
               calendarFormat: calendarFormat,
               eventLoader: (day) => _events[day] ?? [],
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
                   this.selectedDay = selectedDay;
-                  this.focusedDay = focusedDay;  // You might need to add this variable if you want to keep track of which month is focused
+                  this.focusedDay = focusedDay;
                 });
               },
               selectedDayPredicate: (day) {
@@ -87,15 +87,32 @@ class _UserEventsPageState extends State<UserEventsPage> {
                 markerBuilder: (context, date, events) {
                   if (events.isNotEmpty) {
                     return Positioned(
-                      right: 1,
-                      bottom: 1,
+                      right: 5,
+                      bottom: 5,
                       child: _buildEventsMarker(date, events),
                     );
                   }
                 },
+                defaultBuilder: (context, date, _) {
+                  if (_events[date] != null && _events[date]!.isNotEmpty) {
+                    return Container(
+                      margin: const EdgeInsets.all(4.0),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade100, // Change color to indicate selection
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      child: Text(
+                        date.day.toString(),
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    );
+                  } else {
+                    return null; // Use default style
+                  }
+                },
               ),
             ),
-
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: selectedDay == null
@@ -203,11 +220,11 @@ class _UserEventsPageState extends State<UserEventsPage> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: events.length > 1 ? Colors.blue[700] : Colors.blue[400],
+        shape: BoxShape.circle,
+        color: Colors.blue[400],
       ),
-      width: 16.0,
-      height: 16.0,
+      width: 20.0,
+      height: 20.0,
       child: Center(
         child: Text(
           '${events.length}',
@@ -219,6 +236,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ),
     );
   }
+
 
 
 
