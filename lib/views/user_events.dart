@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import '../data/events.dart';
 
 class UserEventsPage extends StatefulWidget {
@@ -15,7 +14,37 @@ class _UserEventsPageState extends State<UserEventsPage> {
   TimeOfDay? _editingTime;
   bool isCalendarVisible = false;
   DateTime? selectedDay;
+  DateTime? focusedDay = DateTime.now();
+  Map<DateTime, List<dynamic>> _events = {};
   CalendarFormat calendarFormat = CalendarFormat.month;
+
+  @override
+  void initState() {
+    super.initState();
+    _retrieveEvents();
+  }
+
+  // Retrieve events and organize them by date for the calendar markers
+  void _retrieveEvents() {
+    FirebaseFirestore.instance.collection('Events').snapshots().listen((snapshot) {
+      Map<DateTime, List<dynamic>> tempEvents = {};
+      for (var doc in snapshot.docs) {
+        DateTime date = (doc.data()['time'] as Timestamp).toDate();
+        DateTime dateKey = DateTime(date.year, date.month, date.day);
+        if (!tempEvents.containsKey(dateKey)) {
+          tempEvents[dateKey] = [];
+        }
+        tempEvents[dateKey]?.add(doc.data());
+      }
+      setState(() {
+        _events = tempEvents;
+      });
+    });
+  }
+
+  List<dynamic> _getEventsForDay(DateTime day) {
+    return _events[day] ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +57,9 @@ class _UserEventsPageState extends State<UserEventsPage> {
             onPressed: () {
               setState(() {
                 isCalendarVisible = !isCalendarVisible;
+                if (!isCalendarVisible) {
+                  selectedDay = null; // Reset the selected day when calendar is closed
+                }
               });
             },
           ),
@@ -35,9 +67,45 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ),
       body: Column(
         children: [
+          if (isCalendarVisible) // Only display the calendar if toggled
+            TableCalendar(
+              firstDay: DateTime.utc(2010, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              focusedDay: DateTime.now(),
+              calendarFormat: calendarFormat,
+              eventLoader: (day) => _events[day] ?? [],
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  this.selectedDay = selectedDay;
+                  this.focusedDay = focusedDay;  // You might need to add this variable if you want to keep track of which month is focused
+                });
+              },
+              selectedDayPredicate: (day) {
+                return isSameDay(selectedDay, day);
+              },
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, date, events) {
+                  if (events.isNotEmpty) {
+                    return Positioned(
+                      right: 1,
+                      bottom: 1,
+                      child: _buildEventsMarker(date, events),
+                    );
+                  }
+                },
+              ),
+            ),
+
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
+              stream: selectedDay == null
+                  ? FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots()
+                  : FirebaseFirestore.instance.collection('Events')
+                  .where('time', isGreaterThanOrEqualTo: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day))
+                  .where('time', isLessThan: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day + 1))
+                  .orderBy('time')
+                  .snapshots(),
+
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Something went wrong');
@@ -126,22 +194,33 @@ class _UserEventsPageState extends State<UserEventsPage> {
               },
             ),
           ),
-          if (isCalendarVisible) // Only display the calendar if toggled
-            TableCalendar(
-              firstDay: DateTime.utc(2010, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: DateTime.now(),
-              calendarFormat: calendarFormat,
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  this.selectedDay = selectedDay;
-                });
-              },
-            ),
         ],
       ),
     );
   }
+
+  Widget _buildEventsMarker(DateTime date, List events) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: events.length > 1 ? Colors.blue[700] : Colors.blue[400],
+      ),
+      width: 16.0,
+      height: 16.0,
+      child: Center(
+        child: Text(
+          '${events.length}',
+          style: TextStyle().copyWith(
+            color: Colors.white,
+            fontSize: 12.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+
 
 
   List<Widget> _buildParticipantWidgets(List<dynamic> participants) {
@@ -205,13 +284,6 @@ class _UserEventsPageState extends State<UserEventsPage> {
     );
   }
 
-  Widget _buildCalendar() {
-    return TableCalendar(
-      firstDay: DateTime.utc(2010, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      focusedDay: DateTime.now(),
-    );
-  }
 }
 
 
