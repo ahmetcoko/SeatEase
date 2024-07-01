@@ -202,6 +202,15 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                 ],
                               ),
                             ),
+                            // Here we integrate the seat grid
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: _buildSeatGrid(
+                                  data['row'],
+                                  data['column'],
+                                  List<bool>.filled(data['row'] * data['column'], false) // Assuming all seats are empty initially
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -215,6 +224,48 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ),
     );
   }
+
+  Widget _buildSeat(bool isOccupied) {
+    return Container(
+      margin: EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: isOccupied ? Colors.white : Colors.blue,
+        border: Border.all(color: Colors.black),
+      ),
+    );
+  }
+
+  Widget _buildSeatGrid(int? rows, int? columns, List<bool> occupancy) {
+    // Debugging output to check what is received
+    print("Building seat grid with rows: $rows, columns: $columns");
+
+    // Provide default values in case rows or columns are null
+    final int rowCount = rows ?? 5; // Default to 5 rows if null
+    final int columnCount = columns ?? 8; // Default to 8 columns if null
+
+    // Ensure occupancy list matches expected size, default to all seats empty
+    if (occupancy.isEmpty || occupancy.length != rowCount * columnCount) {
+      occupancy = List<bool>.filled(rowCount * columnCount, false);
+      print("Occupancy adjusted to match row/column count");
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columnCount,
+        childAspectRatio: 1, // Ensures the cells are square-shaped
+      ),
+      itemCount: rowCount * columnCount,
+      itemBuilder: (context, index) {
+        // Determine if the seat is occupied
+        bool isOccupied = occupancy[index];
+        return _buildSeat(isOccupied);
+      },
+    );
+  }
+
+
 
   Widget _buildEventsMarker(DateTime date, List events) {
     return AnimatedContainer(
