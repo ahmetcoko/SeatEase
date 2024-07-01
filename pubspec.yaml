@@ -65,6 +65,7 @@ flutter:
     - assets/images/event.png
     - assets/images/topImage.png
     - assets/images/expired.png
+    - assets/images/launcher.png
 
 
   # The following line ensures that the Material Icons font is

@@ -14,6 +14,8 @@ class _CreateEventState extends State<CreateEvent> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _rowController = TextEditingController();
+  final TextEditingController _columnController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
@@ -43,12 +45,24 @@ class _CreateEventState extends State<CreateEvent> {
               ),
               SizedBox(height: 20),
               TextFormField(
-                controller: _capacityController,
-                decoration: InputDecoration(labelText: 'Capacity'),
+                controller: _rowController,
+                decoration: InputDecoration(labelText: 'Row'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (value == null || int.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                  if (value == null || int.tryParse(value) == null || int.parse(value) > 10) {
+                    return 'Please enter a valid number less than 10';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _columnController,
+                decoration: InputDecoration(labelText: 'Column'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || int.tryParse(value) == null || int.parse(value) > 10) {
+                    return 'Please enter a valid number less than 10';
                   }
                   return null;
                 },
@@ -144,14 +158,19 @@ class _CreateEventState extends State<CreateEvent> {
           _selectedTime!.minute,
         );
 
+        print('Creating event with date: $eventDateTime');
+
         // Save to Firestore
         FirebaseFirestore.instance.collection('Events').add({
           'name': _nameController.text,
-          'capacity': int.parse(_capacityController.text),
-          'time': eventDateTime,
+          'row': int.parse(_rowController.text),
+          'column': int.parse(_columnController.text),
+          'capacity': int.parse(_rowController.text) * int.parse(_columnController.text),
+          'time': Timestamp.fromDate(eventDateTime), // Make sure to convert DateTime to Timestamp
           'description': _descriptionController.text,
           'participants': [],  // Initialize an empty list for participants
         }).then((result) {
+          print('Event created successfully.');
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Event created successfully')));
           // Clear the form
           _nameController.clear();
@@ -162,19 +181,25 @@ class _CreateEventState extends State<CreateEvent> {
             _selectedTime = null;
           });
         }).catchError((error) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create event')));
+          print('Failed to create event: $error');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create event: $error')));
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select both date and time')));
       }
+    } else {
+      print('Form is not valid');
     }
   }
+
 
   @override
   void dispose() {
     _nameController.dispose();
     _capacityController.dispose();
     _descriptionController.dispose();
+    _rowController.dispose();
+    _columnController.dispose();
     super.dispose();
   }
 }
