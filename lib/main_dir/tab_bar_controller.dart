@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seat_ease/utils/customColors.dart';
-import 'package:seat_ease/widgets/custom_app_bar.dart';
+import 'package:seat_ease/utils/custom_app_bar.dart';
 
 class TabBarController extends StatefulWidget {
   const TabBarController({super.key});

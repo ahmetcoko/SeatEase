@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:seat_ease/views/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
-import 'package:seat_ease/widgets/custom_text_button.dart';
+import 'package:seat_ease/utils/custom_text_button.dart';
 import 'admin_page.dart';
 import 'home_page.dart';
 

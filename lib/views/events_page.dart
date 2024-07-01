@@ -21,7 +21,7 @@ class _EventsPageState extends State<EventsPage> {
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('Events').snapshots(),
+        stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Text('Something went wrong');
@@ -47,7 +47,11 @@ class _EventsPageState extends State<EventsPage> {
                       style: TextStyle(fontWeight: FontWeight.normal),
                     ),
                     trailing: Image.asset(
-                      isAvailable ? 'assets/images/available.png' : 'assets/images/cross.png',
+                      isAvailable
+                          ? (data['time'].toDate().isBefore(DateTime.now())
+                          ? 'assets/images/expired.png'
+                          : 'assets/images/available.png')
+                          : 'assets/images/cross.png',
                       width: 24,
                     ),
                     children: <Widget>[
