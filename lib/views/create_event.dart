@@ -149,7 +149,6 @@ class _CreateEventState extends State<CreateEvent> {
   void _createEvent() {
     if (_formKey.currentState!.validate()) {
       if (_selectedDate != null && _selectedTime != null) {
-        // Combine the date and time into one DateTime object
         DateTime eventDateTime = DateTime(
           _selectedDate!.year,
           _selectedDate!.month,
@@ -158,38 +157,39 @@ class _CreateEventState extends State<CreateEvent> {
           _selectedTime!.minute,
         );
 
-        print('Creating event with date: $eventDateTime');
+        // Example participants added during event creation for demonstration
+        List<Map<String, dynamic>> participants = [];
 
-        // Save to Firestore
         FirebaseFirestore.instance.collection('Events').add({
           'name': _nameController.text,
           'row': int.parse(_rowController.text),
           'column': int.parse(_columnController.text),
           'capacity': int.parse(_rowController.text) * int.parse(_columnController.text),
-          'time': Timestamp.fromDate(eventDateTime), // Make sure to convert DateTime to Timestamp
+          'time': Timestamp.fromDate(eventDateTime),
           'description': _descriptionController.text,
-          'participants': [],  // Initialize an empty list for participants
+          'participants': participants,
         }).then((result) {
-          print('Event created successfully.');
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Event created successfully')));
-          // Clear the form
-          _nameController.clear();
-          _capacityController.clear();
-          _descriptionController.clear();
-          setState(() {
-            _selectedDate = null;
-            _selectedTime = null;
-          });
+          _clearForm();
         }).catchError((error) {
-          print('Failed to create event: $error');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create event: $error')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create event')));
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select both date and time')));
       }
-    } else {
-      print('Form is not valid');
     }
+  }
+
+  void _clearForm() {
+    _nameController.clear();
+    _rowController.clear();
+    _columnController.clear();
+    _capacityController.clear();
+    _descriptionController.clear();
+    setState(() {
+      _selectedDate = null;
+      _selectedTime = null;
+    });
   }
 
 

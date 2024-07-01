@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../data/events.dart';
 import 'package:intl/intl.dart';
 
+
 class EventsPage extends StatefulWidget {
   @override
   _EventsPageState createState() => _EventsPageState();
@@ -91,13 +92,13 @@ class _EventsPageState extends State<EventsPage> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // Add this line
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(data['description']),
+                            Text(data['description'] ?? 'No description provided'),
                             SizedBox(height: 10),
                             Text("Participants", style: TextStyle(fontWeight: FontWeight.bold)),
-                            ...data['participants'].map<Widget>((name) => Text(name)).toList(),
+                            ..._buildParticipantWidgets(data['participants']),
                           ],
                         ),
                       ),
@@ -110,6 +111,20 @@ class _EventsPageState extends State<EventsPage> {
         },
       ),
     );
+  }
+
+  List<Widget> _buildParticipantWidgets(List<dynamic> participants) {
+    return participants.map<Widget>((participant) {
+      if (participant is Map<String, dynamic>) {
+        return Text("${participant['name']} - Seat: ${participant['seat']}");
+      } else if (participant is String) {
+        // Handle the case where a participant is a String
+        return Text(participant);
+      } else {
+        // Handle the case where a participant is neither a Map nor a String
+        return Text('Unknown participant type');
+      }
+    }).toList();
   }
 
   void _changeDateTime(BuildContext context, String eventId) async {
