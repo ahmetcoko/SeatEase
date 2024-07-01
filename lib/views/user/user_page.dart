@@ -1,23 +1,23 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:seat_ease/views/profile_page.dart';
-import 'package:seat_ease/views/create_event.dart';
+import 'package:seat_ease/views/user/user_events.dart';
+import 'package:seat_ease/views/user/user_profile.dart';
+import 'package:seat_ease/views/user/user_settings.dart';
 
-import 'events_page.dart';
 
-class AdminPage extends StatefulWidget {
+
+class UserPage extends StatefulWidget {
   @override
-  _AdminPageState createState() => _AdminPageState();
+  _UserPageState createState() => _UserPageState();
 }
 
-class _AdminPageState extends State<AdminPage> {
+class _UserPageState extends State<UserPage> {
   int _selectedIndex = 0;
 
-  // Define the list of pages as an instance variable instead
+  // Adjusted the list of pages to fit the user context
   final List<Widget> _widgetOptions = [
-    EventsPage(),
-    CreateEvent(),
-    ProfilePage(),
+    UserEventsPage(), // Assumes you have an EventsPage widget
+    UserSettingsPage(), // Assumes you have a SettingsPage widget
+    UserProfilePage(), // Assumes you have a ProfilePage widget
   ];
 
   void _onItemTapped(int index) {
@@ -30,18 +30,17 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // Access the current selected page dynamically
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.event), // Adjust the size as needed
+            icon: Icon(Icons.event),
             label: 'Events',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.create),
-            label: 'Create Event',
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:seat_ease/views/login_page.dart';
+import 'package:seat_ease/views/splash/login_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

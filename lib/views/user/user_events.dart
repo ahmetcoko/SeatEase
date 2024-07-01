@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../data/events.dart';
+import '../../data/events.dart';
 
 class UserEventsPage extends StatefulWidget {
   @override

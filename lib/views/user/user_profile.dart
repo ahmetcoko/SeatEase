@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'login_page.dart';
 
-class ProfilePage extends StatelessWidget {
+import '../splash/login_page.dart';
+
+class UserProfilePage extends StatefulWidget {
+  @override
+  _UserProfilePageState createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,3 +44,4 @@ class ProfilePage extends StatelessWidget {
     });
   }
 }
+
