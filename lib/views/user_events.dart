@@ -10,8 +10,6 @@ class UserEventsPage extends StatefulWidget {
 }
 
 class _UserEventsPageState extends State<UserEventsPage> {
-  DateTime? _editingDate;
-  TimeOfDay? _editingTime;
   bool isCalendarVisible = false;
   DateTime? selectedDay;
   DateTime? focusedDay = DateTime.now();
@@ -40,10 +38,6 @@ class _UserEventsPageState extends State<UserEventsPage> {
         _events = tempEvents;
       });
     });
-  }
-
-  List<dynamic> _getEventsForDay(DateTime day) {
-    return _events[day] ?? [];
   }
 
   @override
