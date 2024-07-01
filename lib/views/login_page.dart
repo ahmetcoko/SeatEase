@@ -5,6 +5,8 @@ import 'package:seat_ease/views/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
 import 'package:seat_ease/utils/custom_text_button.dart';
+import 'package:seat_ease/views/user_events.dart';
+import 'package:seat_ease/views/user_page.dart';
 import 'admin_page.dart';
 import 'home_page.dart';
 
@@ -163,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                     (route) => false);
           } else {
             Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(builder: (context) => UserPage()),
                     (route) => false);
           }
         }

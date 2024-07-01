@@ -1,0 +1,217 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import '../data/events.dart';
+
+class UserEventsPage extends StatefulWidget {
+  @override
+  _UserEventsPageState createState() => _UserEventsPageState();
+}
+
+class _UserEventsPageState extends State<UserEventsPage> {
+  DateTime? _editingDate;
+  TimeOfDay? _editingTime;
+  bool isCalendarVisible = false;
+  DateTime? selectedDay;
+  CalendarFormat calendarFormat = CalendarFormat.month;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("User Events"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.calendar_today),
+            onPressed: () {
+              setState(() {
+                isCalendarVisible = !isCalendarVisible;
+              });
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                return RefreshIndicator(
+                  onRefresh: () => Future.sync(() => snapshot.requireData),
+                  child: ListView(
+                    children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      bool isAvailable = data['participants'].length < data['capacity'];
+                      return Card(
+                        child: ExpansionTile(
+                          leading: Image.asset('assets/images/event.png', width: 40),
+                          title: Text(
+                            data['name'],
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            "Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
+                            style: TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                          trailing: Image.asset(
+                            isAvailable
+                                ? (data['time'].toDate().isBefore(DateTime.now())
+                                ? 'assets/images/expired.png'
+                                : 'assets/images/available.png')
+                                : 'assets/images/cross.png',
+                            width: 24,
+                          ),
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => _changeDateTime(context, document.id),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    minimumSize: Size(150, 50),
+                                  ),
+                                  child: Text(
+                                    "Change Date-Time",
+                                    style: TextStyle(color: Colors.pinkAccent),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => _deleteEvent(document.id),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    minimumSize: Size(150, 50),
+                                  ),
+                                  child: Text(
+                                    "Delete Event",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Text(data['description'] ?? 'No description provided'),
+                                  SizedBox(height: 10),
+                                  Text("Participants", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  ..._buildParticipantWidgets(data['participants']),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
+          ),
+          if (isCalendarVisible) // Only display the calendar if toggled
+            TableCalendar(
+              firstDay: DateTime.utc(2010, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              focusedDay: DateTime.now(),
+              calendarFormat: calendarFormat,
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  this.selectedDay = selectedDay;
+                });
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+
+  List<Widget> _buildParticipantWidgets(List<dynamic> participants) {
+    return participants.map<Widget>((participant) {
+      if (participant is Map<String, dynamic>) {
+        return Text("${participant['name']} - Seat: ${participant['seat']}");
+      } else if (participant is String) {
+        // Handle the case where a participant is a String
+        return Text(participant);
+      } else {
+        // Handle the case where a participant is neither a Map nor a String
+        return Text('Unknown participant type');
+      }
+    }).toList();
+  }
+
+  void _changeDateTime(BuildContext context, String eventId) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _editingDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _editingTime ?? TimeOfDay.now(),
+    );
+
+    if (pickedDate != null && pickedTime != null) {
+      // Combine the date and time into one DateTime object
+      DateTime eventDateTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+
+      // Update the event in Firestore
+      await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
+        'time': eventDateTime,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Event date-time updated successfully')),
+      );
+    }
+  }
+
+  void _deleteEvent(String eventId) async {
+    await FirebaseFirestore.instance.collection('Events').doc(eventId).delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Event deleted successfully')),
+    );
+  }
+
+
+  Stream<List<Event>> streamEvents() {
+    return FirebaseFirestore.instance.collection('Events').snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => Event.fromFirestore(doc.data() as Map<String, dynamic>)).toList()
+    );
+  }
+
+  Widget _buildCalendar() {
+    return TableCalendar(
+      firstDay: DateTime.utc(2010, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: DateTime.now(),
+    );
+  }
+}
+
+
