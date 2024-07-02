@@ -13,6 +13,8 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  final double coverHeight = 280;
+  final double profileHeight = 144;
   File? _image;
   final picker = ImagePicker();
   String? _profileImageUrl;
@@ -103,8 +105,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
 
+  Widget buildCoverImage() => Container(
+    color: Colors.grey,
+    child: Image.asset(
+      'assets/images/devent.jpg', // Path to the image in your assets directory
+      width: double.infinity,
+      height: coverHeight, // Arbitrary height for cover image
+      fit: BoxFit.cover,
+    ),
+  );
+
+
+  Widget buildProfileImage() => CircleAvatar(
+    radius: profileHeight/2, // Arbitrary radius for profile image
+    backgroundColor: Colors.grey.shade800,
+    backgroundImage: NetworkImage(_profileImageUrl!),
+  );
+
   @override
   Widget build(BuildContext context) {
+    double coverHeight = 280; // Same as the cover image height
+    double profileHeight = 144; // Double the radius of the profile image
+    double top = coverHeight - profileHeight / 2;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),
@@ -114,52 +137,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
           onPressed: () => _logout(context),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/devent.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: -25, // Adjust this value to get the desired effect
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: ClipRect(
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        backgroundImage: _profileImageUrl != null
-                            ? NetworkImage(_profileImageUrl!)
-                            : AssetImage('assets/images/profile_placeholder.png') as ImageProvider,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      body:
+          Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              buildCoverImage(),
+              Positioned(child: buildProfileImage(),top: top,)
+            ],
           ),
-          Expanded(
-            flex: 3,
-            child: Container(
-              color: Colors.white,
-              child: Center(
-                child: Text("Profile details and more info here."),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+      );
   }
 
 
