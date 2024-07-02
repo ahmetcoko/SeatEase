@@ -118,93 +118,108 @@ class UserEventsPage extends StatefulWidget {
                 ),
               ),
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: selectedDay == null
-                    ? FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots()
-                    : FirebaseFirestore.instance.collection('Events')
-                    .where('time', isGreaterThanOrEqualTo: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day))
-                    .where('time', isLessThan: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day + 1))
-                    .orderBy('time')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Something went wrong');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  }
-                  return ListView(
-                    children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                      return Card(
-                        child: ExpansionTile(
-                          leading: Image.asset('assets/images/event.png', width: 40),
-                          title: Text(
-                            data['name'],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: selectedDay == null
+                      ? FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots()
+                      : FirebaseFirestore.instance.collection('Events')
+                      .where('time', isGreaterThanOrEqualTo: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day))
+                      .where('time', isLessThan: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day + 1))
+                      .orderBy('time')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    }
+                    return ListView(
+                      children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+                        bool isUserJoined = data['participants'].any((participant) => participant['uid'] == currentUserId);
+                        bool isFull = data['participants'].length >= data['capacity'];
+                        bool isPast = data['time'].toDate().isBefore(DateTime.now());
+
+                        return Card(
+                          child: ExpansionTile(
+                            leading: Image.asset('assets/images/event.png', width: 40),
+                            title: Text(
+                              data['name'],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              "Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            ),
+                            trailing: Image.asset(
+                              isUserJoined
+                                  ? 'assets/images/res2.png'  // Show reserved image if user is joined
+                                  : isFull
+                                  ? 'assets/images/cross.png'  // Show cross image if event is full
+                                  : isPast
+                                  ? 'assets/images/expired.png'  // Show expired image if the event date is past
+                                  : 'assets/images/available.png',  // Otherwise, show available image
+                              width: 24,
+                            ),
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Description",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  data['description'] ?? 'No description provided',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              Divider(),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: _buildSeatGrid(
+                                    data['row'],
+                                    data['column'],
+                                    data['participants'],
+                                    document.id
+                                ),
+                              ),
+                              Divider(),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 20,
+                                      height: 20,
+                                      color: Colors.red.shade800,
+                                      margin: EdgeInsets.symmetric(horizontal: 10),
+                                    ),
+                                    Text("Full"),
+                                    Container(
+                                      width: 20,
+                                      height: 20,
+                                      color: Colors.green.shade200,
+                                      margin: EdgeInsets.symmetric(horizontal: 10),
+                                    ),
+                                    Text("Empty"),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                          subtitle: Text(
-                            "Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}",
-                            style: TextStyle(fontWeight: FontWeight.normal),
-                          ),
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Description",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                data['description'] ?? 'No description provided',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            Divider(),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: _buildSeatGrid(
-                                  data['row'],
-                                  data['column'],
-                                  data['participants'],
-                                  document.id
-                              ),
-                            ),
-                            Divider(),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    color: Colors.red.shade800,
-                                    margin: EdgeInsets.symmetric(horizontal: 10),
-                                  ),
-                                  Text("Full"),
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    color: Colors.green.shade200,
-                                    margin: EdgeInsets.symmetric(horizontal: 10),
-                                  ),
-                                  Text("Empty"),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
-              )
-            ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
+            )
           ],
         ),
       );
