@@ -124,9 +124,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    double coverHeight = 280; // Same as the cover image height
-    double profileHeight = 144; // Double the radius of the profile image
-    double top = coverHeight - profileHeight / 2;
+    double coverHeight = 280; // Height for cover image
+    double profileHeight = 144; // Double the radius for profile image
+    double top = coverHeight - profileHeight / 2; // Calculate top position for profile image
 
     return Scaffold(
       appBar: AppBar(
@@ -137,17 +137,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
           onPressed: () => _logout(context),
         ),
       ),
-      body:
-          Stack(
-            alignment: Alignment.center,
-            clipBehavior: Clip.none,
-            children: [
-              buildCoverImage(),
-              Positioned(child: buildProfileImage(),top: top,)
-            ],
+      body: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          buildCoverImage(),
+          Positioned(
+            top: top,
+            child: GestureDetector(
+              onTap: _pickImage, // Call _pickImage when profile image is tapped
+              child: buildProfileImage(),
+            ),
           ),
-      );
+        ],
+      ),
+    );
   }
+
 
 
 
