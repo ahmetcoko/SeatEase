@@ -117,10 +117,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
 
   Widget buildProfileImage() => CircleAvatar(
-    radius: profileHeight/2, // Arbitrary radius for profile image
+    radius: profileHeight / 2,
     backgroundColor: Colors.grey.shade800,
-    backgroundImage: NetworkImage(_profileImageUrl!),
+    backgroundImage: _profileImageUrl != null ? NetworkImage(_profileImageUrl!) : AssetImage('assets/placeholder.jpg'), // Fallback to a local asset
   );
+
 
   @override
   Widget build(BuildContext context) {
