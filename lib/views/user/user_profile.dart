@@ -209,9 +209,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         if (joinedEvents.isEmpty) {
                           return Center(child: Text("You haven't joined any events"));
                         }
-
                         return ListView(
-                          children: joinedEvents.map((DocumentSnapshot document) {
+                          children: eventSnapshot.data!.docs.map((DocumentSnapshot document) {
                             Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                             return Card(
                               child: ExpansionTile(
@@ -220,8 +219,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 subtitle: Text("Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
                                 children: <Widget>[
                                   Padding(
+                                    padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                                    child: Center(
+                                      child: Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(data['description'] ?? 'No description provided'),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: Text("Seat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: Text(
+                                        data['participants']
+                                            .firstWhere((participant) => participant['name'] == currentUserName, orElse: () => {'seat': 'No Seat Assigned'})['seat'],
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
