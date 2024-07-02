@@ -40,7 +40,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         title: Text("Profile"),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.logout),
           onPressed: () {
             _logout(context);
           },
@@ -101,5 +101,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
   }
 }
+
+
 
 
