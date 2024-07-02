@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../splash/login_page.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -128,12 +129,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
     backgroundImage: _profileImageUrl != null ? NetworkImage(_profileImageUrl!) : AssetImage('assets/placeholder.jpg'), // Fallback to a local asset
   );
 
+  Future<String> _fetchUserFullName() async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (userId.isEmpty) {
+      print("No user ID available");
+      return "Unknown User";
+    }
+
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        return userData['fullname'] ?? "Unknown User";
+      }
+    } catch (e) {
+      print("Failed to load user fullname: $e");
+    }
+    return "Unknown User";
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    double coverHeight = 280; // Height for cover image
-    double profileHeight = 144; // Double the radius for profile image
-    double top = coverHeight - profileHeight / 2; // Calculate top position for profile image
+    double coverHeight = 280;
+    double profileHeight = 144;
+    double top = coverHeight - profileHeight / 2;
 
     return Scaffold(
       appBar: AppBar(
@@ -148,11 +169,67 @@ class _UserProfilePageState extends State<UserProfilePage> {
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-          buildCoverImage(),
+          Column(
+            children: [
+              buildCoverImage(),
+              Expanded(
+                child: FutureBuilder<String>(
+                  future: _fetchUserFullName(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError || snapshot.data == "Unknown User") {
+                      return Center(child: Text("Failed to fetch user data or user not found"));
+                    }
+                    String currentUserName = snapshot.data!;
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Something went wrong');
+                        }
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        var joinedEvents = snapshot.data!.docs.where((DocumentSnapshot document) {
+                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                          return data['participants'].any((participant) => participant['name'] == currentUserName);
+                        }).toList();
+
+                        if (joinedEvents.isEmpty) {
+                          return Center(child: Text("You haven't joined any events"));
+                        }
+
+                        return ListView(
+                          children: joinedEvents.map((DocumentSnapshot document) {
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            return Card(
+                              child: ExpansionTile(
+                                leading: Image.asset('assets/images/event.png', width: 40),
+                                title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                                subtitle: Text("Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(data['description'] ?? 'No description provided'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
           Positioned(
             top: top,
             child: GestureDetector(
-              onTap: _pickImage, // Call _pickImage when profile image is tapped
+              onTap: _pickImage,
               child: buildProfileImage(),
             ),
           ),
@@ -160,6 +237,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
       ),
     );
   }
+
+
+
+
 
 
 
