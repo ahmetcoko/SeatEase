@@ -124,7 +124,6 @@ class UserEventsPage extends StatefulWidget {
                     .where('time', isLessThan: DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day + 1))
                     .orderBy('time')
                     .snapshots(),
-
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('Something went wrong');
@@ -138,7 +137,7 @@ class UserEventsPage extends StatefulWidget {
                       children: snapshot.data!.docs.map((DocumentSnapshot document) {
                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                         bool isAvailable = data['participants'].length < data['capacity'];
-                        return InkWell( // Using InkWell to add a tap functionality
+                        return InkWell(
                           onTap: () {
                             // Here you can use document.id which is the documentId of the clicked item
                             print("Clicked event ID: ${document.id}");
@@ -164,20 +163,38 @@ class UserEventsPage extends StatefulWidget {
                                 width: 24,
                               ),
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                ),
-                                // Here we integrate the seat grid
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: _buildSeatGrid(
-                                      data['row'] as int,
-                                      data['column'] as int,
-                                      data['participants'] as List<dynamic>,  // Make sure this casting is valid
+                                      data['row'],
+                                      data['column'],
+                                      data['participants'],
                                       document.id
                                   ),
+                                ),
+                                Divider(),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        color: Colors.red.shade800,
+                                        margin: EdgeInsets.symmetric(horizontal: 10),
+                                      ),
+                                      Text("Full"),
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        color: Colors.green.shade200,
+                                        margin: EdgeInsets.symmetric(horizontal: 10),
+                                      ),
+                                      Text("Empty"),
+                                    ],
+                                  ),
                                 )
-
                               ],
                             ),
                           ),
