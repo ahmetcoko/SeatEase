@@ -225,10 +225,11 @@ import '../../data/events.dart';
           {'name': 'Ahmet Coko', 'seat': seatId}
         ])
       }).then((_) {
-        print("Seat reserved successfully.");
-        // Optionally, refresh the state to show the updated seat status
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Seat $seatId reserved successfully!"))
+        );
       }).catchError((error) {
-        print("Failed to reserve seat: $error");
+        SnackBar(content: Text("Failed to reserve seat: $error"));
       });
     }
 
