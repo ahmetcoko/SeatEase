@@ -53,6 +53,7 @@ class UserEventsPage extends StatefulWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text("User Events"),
+          centerTitle: true,
           actions: [
             IconButton(
               icon: Icon(Icons.calendar_today),
@@ -213,7 +214,17 @@ class UserEventsPage extends StatefulWidget {
       );
     }
 
-    void _showReservationDialog(String seatId, String documentId) {
+    void _showReservationDialog(String seatId, String documentId, List<dynamic> participants) {
+      // Check if the current user has already reserved a seat
+      bool hasReserved = participants.any((participant) => participant['name'] == 'Ahmet Coko');
+
+      if (hasReserved) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("You have already reserved a seat in this event."))
+        );
+        return;  // Exit if the user has already reserved a seat
+      }
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -277,16 +288,16 @@ class UserEventsPage extends StatefulWidget {
 
           // Determine if the seat is occupied
           bool isOccupied = occupiedSeats.contains(seatId);
-          return _buildSeat(row, col, isOccupied, documentId, seatId);
+          return _buildSeat(row, col, isOccupied, documentId, seatId, participants);
         },
       );
     }
 
-    Widget _buildSeat(int row, int col, bool isOccupied, String documentId, String seatId) {
+    Widget _buildSeat(int row, int col, bool isOccupied, String documentId, String seatId, List<dynamic> participants) {
       return InkWell(
         onTap: () {
           if (!isOccupied) {
-            _showReservationDialog(seatId, documentId);
+            _showReservationDialog(seatId, documentId, participants);
           }
         },
         child: Container(
