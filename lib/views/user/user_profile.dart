@@ -88,14 +88,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
 
   Future<void> _loadProfilePicture() async {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Safe access with null check and fallback
+    if (userId.isEmpty) {
+      print("No user ID available");
+      return;
+    }
+
     try {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
       if (userDoc.exists) {
-        Map<String, dynamic> userData = userDoc.data()! as Map<String, dynamic>;  // Cast to Map<String, dynamic>
-        if (userData.containsKey('profilePicture')) {
+        Map<String, dynamic> userData = userDoc.data()! as Map<String, dynamic>;
+        if (userData.containsKey('profilePicture') && mounted) { // Check if the widget is still mounted
           setState(() {
-            _profileImageUrl = userData['profilePicture'] as String;  // Cast for safety, although usually not necessary
+            _profileImageUrl = userData['profilePicture'] as String;
           });
         }
       }
@@ -103,6 +108,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       print("Failed to load profile picture: $e");
     }
   }
+
 
 
   Widget buildCoverImage() => Container(

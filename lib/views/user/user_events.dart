@@ -49,6 +49,7 @@ class UserEventsPage extends StatefulWidget {
 
     @override
     Widget build(BuildContext context) {
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
       return Scaffold(
         appBar: AppBar(
           title: Text("User Events"),
@@ -136,7 +137,7 @@ class UserEventsPage extends StatefulWidget {
                     child: ListView(
                       children: snapshot.data!.docs.map((DocumentSnapshot document) {
                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                        bool isAvailable = data['participants'].length < data['capacity'];
+                        bool isUserJoined = data['participants'].any((participant) => participant['name'] == 'Ahmet Coko');  // Check if user is joined
                         return InkWell(
                           onTap: () {
                             // Here you can use document.id which is the documentId of the clicked item
@@ -155,11 +156,13 @@ class UserEventsPage extends StatefulWidget {
                                 style: TextStyle(fontWeight: FontWeight.normal),
                               ),
                               trailing: Image.asset(
-                                isAvailable
-                                    ? (data['time'].toDate().isBefore(DateTime.now())
-                                    ? 'assets/images/expired.png'
-                                    : 'assets/images/available.png')
-                                    : 'assets/images/cross.png',
+                                isUserJoined
+                                    ? 'assets/images/res2.png'  // Show reserved image if user is joined
+                                    : data['participants'].length >= data['capacity']  // Check if event is full
+                                    ? 'assets/images/cross.png'  // Show cross image if event is full
+                                    : (data['time'].toDate().isBefore(DateTime.now())
+                                    ? 'assets/images/expired.png'  // Show expired image if the event date is past
+                                    : 'assets/images/available.png'),  // Otherwise, show available image
                                 width: 24,
                               ),
                               children: <Widget>[
