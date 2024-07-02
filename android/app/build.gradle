@@ -49,4 +49,5 @@ flutter {
 dependencies {
     // Define only the Kotlin dependency that includes JDK 8 features.
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10"
+    implementation "com.google.firebase:firebase-storage:21.0.0"
 }

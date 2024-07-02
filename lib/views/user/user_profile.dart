@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../splash/login_page.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class UserProfilePage extends StatefulWidget {
   @override
@@ -13,25 +15,93 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   File? _image;
   final picker = ImagePicker();
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    print("Initializing user profile page.");
+    _loadProfilePicture();
+  }
+
 
   Future<void> _pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      _uploadProfilePicture();
+    try {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        File tempImage = File(pickedFile.path);
+        setState(() {
+          _image = tempImage; // Temporarily display selected image
+        });
+        print("Image picked: ${tempImage.path}");
+        await _uploadProfilePicture(tempImage); // Ensure upload completes before setting state
+      } else {
+        print("No image selected");
+      }
+    } catch (e) {
+      print("Failed to pick image: $e");
     }
   }
 
-  Future<void> _uploadProfilePicture() async {
+
+  Future<void> _uploadProfilePicture(File image) async {
+    print("Starting upload of profile picture.");
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    FirebaseFirestore.instance.collection('Users').doc(userId).update({
-      'profilePicture': _image!.path
-    }).catchError((error) {
-      print("Failed to update profile picture: $error");
-    });
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref = storage.ref().child('profile_pictures').child(userId);
+
+    try {
+      UploadTask uploadTask = ref.putFile(image);
+      // Listen to the upload task for progress reporting
+      uploadTask.snapshotEvents.listen(
+              (TaskSnapshot snapshot) {
+            print("Task state: ${snapshot.state}, bytes uploaded: ${snapshot.bytesTransferred} / ${snapshot.totalBytes}");
+          },
+          onError: (e) {
+            print("Upload failed with error: $e");
+          },
+          onDone: () async {
+            print("Upload completed.");
+            try {
+              String downloadURL = await ref.getDownloadURL();
+              print("Download URL: $downloadURL");
+              await FirebaseFirestore.instance.collection('Users').doc(userId).update({
+                'profilePicture': downloadURL
+              });
+              setState(() {
+                _profileImageUrl = downloadURL; // Update displayed image
+              });
+            } catch (e) {
+              print("Failed to get download URL or update Firestore: $e");
+            }
+          }
+      );
+    } catch (e, s) {
+      print("Failed to initiate upload task: $e");
+      print("Stack trace: $s");
+    }
   }
+
+
+
+
+  Future<void> _loadProfilePicture() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data()! as Map<String, dynamic>;  // Cast to Map<String, dynamic>
+        if (userData.containsKey('profilePicture')) {
+          setState(() {
+            _profileImageUrl = userData['profilePicture'] as String;  // Cast for safety, although usually not necessary
+          });
+        }
+      }
+    } catch (e) {
+      print("Failed to load profile picture: $e");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +111,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.logout),
-          onPressed: () {
-            _logout(context);
-          },
+          onPressed: () => _logout(context),
         ),
       ),
       body: Column(
         children: [
           Expanded(
-            flex: 2, // Proportion of screen for the event photo
+            flex: 2,
             child: Stack(
-              alignment: Alignment.bottomCenter, // Ensure alignment is centered at the bottom
+              alignment: Alignment.bottomCenter,
               children: [
                 Container(
                   width: double.infinity,
@@ -63,15 +131,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                 ),
                 Positioned(
-                  bottom: -50, // Position to half the diameter of the CircleAvatar to align its center with the container's bottom
+                  bottom: -50,
                   child: GestureDetector(
                     onTap: _pickImage,
                     child: CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.white,
-                      backgroundImage: _image != null
-                          ? FileImage(_image!)
-                          : AssetImage('assets/images/profile_placeholder.png'),
+                      backgroundImage: _profileImageUrl != null
+                          ? NetworkImage(_profileImageUrl!)
+                          : AssetImage('assets/images/profile_placeholder.png') as ImageProvider,
                     ),
                   ),
                 ),
@@ -79,7 +147,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
           ),
           Expanded(
-            flex: 3, // Proportion of screen for profile details
+            flex: 3,
             child: Container(
               color: Colors.white,
               child: Center(
@@ -92,7 +160,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut().then((value) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
@@ -101,7 +168,4 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
   }
 }
-
-
-
 
