@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../data/events.dart';
 
-  class UserEventsPage extends StatefulWidget {
+class UserEventsPage extends StatefulWidget {
     @override
     _UserEventsPageState createState() => _UserEventsPageState();
   }
@@ -171,12 +171,13 @@ import '../../data/events.dart';
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: _buildSeatGrid(
-                                      data['row'],
-                                      data['column'],
-                                      List<bool>.filled(data['row'] * data['column'], false), // Assuming all seats are empty initially
-                                      document.id // Pass the documentId to _buildSeatGrid
+                                      data['row'] as int,
+                                      data['column'] as int,
+                                      data['participants'] as List<dynamic>,  // Make sure this casting is valid
+                                      document.id
                                   ),
-                                ),
+                                )
+
                               ],
                             ),
                           ),
@@ -235,9 +236,33 @@ import '../../data/events.dart';
 
 
 
-    Widget _buildSeat(int row, int col, bool isOccupied, String documentId) {
-      // Construct seat identifier
-      String seatId = String.fromCharCode(65 + row) + (col + 1).toString();
+    Widget _buildSeatGrid(int rows, int columns, List<dynamic> participants, String documentId) {
+      // Create a set of occupied seats for quick lookup
+      Set<String> occupiedSeats = participants.map<String>((participant) {
+        return participant['seat'] as String;  // Make sure 'seat' is a string and corresponds to your seat naming convention
+      }).toSet();
+
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: columns,
+          childAspectRatio: 1,
+        ),
+        itemCount: rows * columns,
+        itemBuilder: (context, index) {
+          int row = index ~/ columns;
+          int col = index % columns;
+          String seatId = String.fromCharCode(65 + row) + (col + 1).toString(); // Generates seat ID like "A1", "A2", ...
+
+          // Determine if the seat is occupied
+          bool isOccupied = occupiedSeats.contains(seatId);
+          return _buildSeat(row, col, isOccupied, documentId, seatId);
+        },
+      );
+    }
+
+    Widget _buildSeat(int row, int col, bool isOccupied, String documentId, String seatId) {
       return InkWell(
         onTap: () {
           if (!isOccupied) {
@@ -256,22 +281,6 @@ import '../../data/events.dart';
       );
     }
 
-    Widget _buildSeatGrid(int rows, int columns, List<bool> occupancy, String documentId) {
-      return GridView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: columns,
-          childAspectRatio: 1,
-        ),
-        itemCount: rows * columns,
-        itemBuilder: (context, index) {
-          int row = index ~/ columns;
-          int col = index % columns;
-          return _buildSeat(row, col, occupancy[index], documentId);
-        },
-      );
-    }
 
 
 
