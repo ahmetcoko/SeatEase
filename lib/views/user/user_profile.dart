@@ -131,15 +131,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                 ),
                 Positioned(
-                  bottom: -50,
+                  bottom: -25, // Adjust this value to get the desired effect
                   child: GestureDetector(
                     onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.white,
-                      backgroundImage: _profileImageUrl != null
-                          ? NetworkImage(_profileImageUrl!)
-                          : AssetImage('assets/images/profile_placeholder.png') as ImageProvider,
+                    child: ClipRect(
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white,
+                        backgroundImage: _profileImageUrl != null
+                            ? NetworkImage(_profileImageUrl!)
+                            : AssetImage('assets/images/profile_placeholder.png') as ImageProvider,
+                      ),
                     ),
                   ),
                 ),
@@ -159,6 +161,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
       ),
     );
   }
+
+
 
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut().then((value) {
