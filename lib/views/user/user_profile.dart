@@ -155,6 +155,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     double coverHeight = 280;
     double profileHeight = 144;
     double top = coverHeight - profileHeight / 2;
+    double bottomListTop = top + profileHeight / 2 + 20; // Added a 20 pixel space for clarity
 
     return Scaffold(
       appBar: AppBar(
@@ -171,7 +172,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
         children: [
           Column(
             children: [
-              buildCoverImage(),
+              Container(
+                height: coverHeight,
+                width: double.infinity,
+                child: Image.asset(
+                  'assets/images/devent.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(height: profileHeight / 2 + 20), // Make space for the overlapping part of the profile image
               Expanded(
                 child: FutureBuilder<String>(
                   future: _fetchUserFullName(),
@@ -185,14 +194,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     String currentUserName = snapshot.data!;
                     return StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
+                      builder: (context, eventSnapshot) {
+                        if (eventSnapshot.hasError) {
                           return Text('Something went wrong');
                         }
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (eventSnapshot.connectionState == ConnectionState.waiting) {
                           return CircularProgressIndicator();
                         }
-                        var joinedEvents = snapshot.data!.docs.where((DocumentSnapshot document) {
+                        var joinedEvents = eventSnapshot.data!.docs.where((DocumentSnapshot document) {
                           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                           return data['participants'].any((participant) => participant['name'] == currentUserName);
                         }).toList();
@@ -230,13 +239,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
             top: top,
             child: GestureDetector(
               onTap: _pickImage,
-              child: buildProfileImage(),
+              child: CircleAvatar(
+                radius: profileHeight / 2,
+                backgroundColor: Colors.grey.shade800,
+                backgroundImage: _profileImageUrl != null ? NetworkImage(_profileImageUrl!) : AssetImage('assets/placeholder.jpg'),
+              ),
             ),
           ),
         ],
       ),
     );
   }
+
 
 
 
