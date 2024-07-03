@@ -243,6 +243,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(data['description'] ?? 'No description provided'),
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: Text("Seat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: Text(
+                                        data['participants']
+                                            .firstWhere((participant) => participant['name'] == currentUserName, orElse: () => {'seat': 'No Seat Assigned'})['seat'],
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             );
