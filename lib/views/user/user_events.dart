@@ -23,8 +23,12 @@ class UserEventsPage extends StatefulWidget {
     Map<DateTime, List<dynamic>> _events = {};
     CalendarFormat calendarFormat = CalendarFormat.month;
     String currUserName = '';
-
-
+/// TODO: BAK
+  /*@override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }*/
     @override
     void initState() {
       super.initState();
