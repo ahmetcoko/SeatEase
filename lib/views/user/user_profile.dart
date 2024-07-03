@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:seat_ease/views/user/user_setting_page.dart';
 import '../splash/login_page.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -165,6 +166,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
           icon: Icon(Icons.logout),
           onPressed: () => _logout(context),
         ),
+        actions: <Widget>[
+          IconButton(
+          icon: Icon(Icons.settings),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => SettingsUserPage()),
+            );
+          },
+        ),
+        ],
       ),
       body: Stack(
         alignment: Alignment.center,
@@ -180,7 +191,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: profileHeight / 2 + 20), // Make space for the overlapping part of the profile image
+              SizedBox(height: profileHeight / 2 + 20), // Added a 20 pixel space for clarity
               Expanded(
                 child: FutureBuilder<String>(
                   future: _fetchUserFullName(),
@@ -229,7 +240,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     child: Text(
                                       "Cancel Reservation",
                                       style: TextStyle(
-                                        color: Colors.pinkAccent, // Assuming you want white text for better contrast
+                                        color: Colors.pinkAccent,
                                       ),
                                     ),
                                   ),

@@ -3,13 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../data/events.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
-import '../../data/events.dart';
 
 class UserEventsPage extends StatefulWidget {
     @override
@@ -23,6 +17,7 @@ class UserEventsPage extends StatefulWidget {
     Map<DateTime, List<dynamic>> _events = {};
     CalendarFormat calendarFormat = CalendarFormat.month;
     String currUserName = '';
+
 /// TODO: BAK
   /*@override
   void didChangeDependencies() {

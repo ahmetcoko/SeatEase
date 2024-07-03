@@ -43,4 +43,46 @@ class AppTheme {
       ),
     );
   }
+
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: Colors.black,
+      hintColor: Colors.lightBlueAccent,
+      scaffoldBackgroundColor: Colors.grey[900],
+
+      textTheme: TextTheme(
+        displayLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: Colors.white),
+        titleMedium: TextStyle(fontSize: 18.0, fontStyle: FontStyle.italic, color: Colors.white70),
+        bodyLarge: TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: Colors.white),
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey.shade700),
+        ),
+        filled: true,
+        fillColor: Colors.grey[850],
+        labelStyle: TextStyle(color: Colors.grey), // Label color
+        hintStyle: TextStyle(color: Colors.grey),  // Hint text color
+        errorStyle: TextStyle(color: Colors.redAccent),  // Error text color
+        counterStyle: TextStyle(color: Colors.white),
+        floatingLabelStyle: TextStyle(color: Colors.white),
+      ),
+
+      buttonTheme: ButtonThemeData(
+        buttonColor: Colors.lightBlueAccent,
+        textTheme: ButtonTextTheme.primary,
+      ),
+
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        color: Colors.grey[850],
+        toolbarTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
 }

@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../data/events.dart';
 import 'package:intl/intl.dart';
+
+import '../../model/events.dart';
 
 
 class EventsPage extends StatefulWidget {
