@@ -168,13 +168,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ),
         actions: <Widget>[
           IconButton(
-          icon: Icon(Icons.settings),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => SettingsUserPage()),
-            );
-          },
-        ),
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => SettingsUserPage()),
+              );
+            },
+          ),
         ],
       ),
       body: Stack(
@@ -329,4 +329,3 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
   }
 }
-
