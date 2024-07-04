@@ -96,6 +96,12 @@ class UserEventsPage extends StatefulWidget {
       return "Unknown User";
     }
 
+    void toggleCalendarVisibility() {
+      setState(() {
+        isCalendarVisible = !isCalendarVisible;
+      });
+    }
+
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -104,15 +110,8 @@ class UserEventsPage extends StatefulWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.calendar_today),
-              onPressed: () {
-                setState(() {
-                  isCalendarVisible = !isCalendarVisible;
-                  if (!isCalendarVisible) {
-                    selectedDay = null; // Reset the selected day when calendar is closed
-                  }
-                });
-              },
+              icon: Icon(isCalendarVisible ? Icons.calendar_view_day : Icons.calendar_today),
+              onPressed: toggleCalendarVisibility,
             ),
           ],
         ),
@@ -120,7 +119,15 @@ class UserEventsPage extends StatefulWidget {
             ? Center(child: CircularProgressIndicator())  // Show a full-screen loader if data is not yet loaded
             : AnimatedOpacity(
           opacity: showContent ? 1.0 : 0.0,
-          duration: Duration(milliseconds: 500),
+          duration: Duration(milliseconds: 2000),
+          onEnd: () {
+            if (!showContent) {
+              // Only update the state to show content once the animation has completed, preventing premature visibility
+              setState(() {
+                showContent = true;
+              });
+            }
+          },
           child: Column(
             children: [
               if (isCalendarVisible) // Only display the calendar if toggled
