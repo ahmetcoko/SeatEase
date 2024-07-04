@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -72,9 +73,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
               await FirebaseFirestore.instance.collection('Users').doc(userId).update({
                 'profilePicture': downloadURL
               });
-              setState(() {
-                _profileImageUrl = downloadURL; // Update displayed image
-              });
+              if (mounted) {
+                setState(() {
+                  _profileImageUrl = downloadURL; // Update displayed image only if the widget is mounted
+                });
+              }
             } catch (e) {
               print("Failed to get download URL or update Firestore: $e");
             }
@@ -127,8 +130,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget buildProfileImage() => CircleAvatar(
     radius: profileHeight / 2,
     backgroundColor: Colors.grey.shade800,
-    backgroundImage: _profileImageUrl != null ? NetworkImage(_profileImageUrl!) : AssetImage('assets/placeholder.jpg'), // Fallback to a local asset
+    backgroundImage: _profileImageUrl != null
+        ? CachedNetworkImageProvider(_profileImageUrl!)
+        : AssetImage('assets/placeholder.jpg'),
   );
+
 
   Future<String> _fetchUserFullName() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -312,14 +318,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to cancel reservation: $error")));
     });
   }
-
-
-
-
-
-
-
-
 
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut().then((value) {
