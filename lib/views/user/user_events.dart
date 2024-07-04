@@ -33,9 +33,11 @@ class UserEventsPage extends StatefulWidget {
 
     void _initUserName() async {
       String name = await _fetchUserFullName();
-      setState(() {
-        currUserName = name;
-      });
+      if (mounted) {
+        setState(() {
+          currUserName = name;
+        });
+      }
     }
 
 

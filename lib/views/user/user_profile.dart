@@ -203,15 +203,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   future: _fetchUserFullName(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return Center(child: CircularProgressIndicator()); // Show loading indicator while waiting
                     }
-                    if (snapshot.hasError || snapshot.data == "Unknown User") {
+                    if (snapshot.hasError || !snapshot.hasData) {
                       return Center(child: Text("Failed to fetch user data or user not found"));
                     }
                     String currentUserName = snapshot.data!;
+                    // Continue with your logic here once the data is available
                     return StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
                       builder: (context, eventSnapshot) {
+                        if (eventSnapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Ensure this also handles loading gracefully
+                        }
                         if (eventSnapshot.hasError) {
                           return Text('Something went wrong');
                         }
