@@ -13,7 +13,6 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   int _selectedIndex = 0;
 
-  // Adjusted the list of pages to fit the user context
   final List<Widget> _widgetOptions = [
     UserEventsPage(), // Assumes you have an EventsPage widget
     UserSettingsPage(), // Assumes you have a SettingsPage widget
@@ -30,7 +29,16 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),  // Duration of the transition
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

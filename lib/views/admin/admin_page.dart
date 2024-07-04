@@ -29,8 +29,14 @@ class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        // Access the current selected page dynamically
+      body: AnimatedSwitcher(
+        duration: Duration(milliseconds: 300),  // Duration of the transition
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
