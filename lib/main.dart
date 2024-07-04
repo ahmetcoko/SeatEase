@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seat_ease/views/splash/sign_up.dart';
+import 'package:seat_ease/views/splash/splash_screen.dart';
 import 'package:seat_ease/views/theme_changer.dart';
 import 'utils/app_theme.dart';
 import 'views/splash/login_page.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
         "/signUp": (context) => SignUp(),
       },
       theme: theme.getTheme(),  // Use the current theme from the provider
-      home: LoginPage(),  // initial route
+      home: SplashScreen(),  // initial route
     );
   }
 }
