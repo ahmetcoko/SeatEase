@@ -2,6 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../splash/login_page.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'admin_settings.dart';
+// Make sure this import points to your actual settings page
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -12,11 +16,18 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.logout),
-          onPressed: () {
-            // Implement the logout functionality
-            _logout(context);
-          },
+          onPressed: () => _logout(context),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AdminSettingsPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Text('Profile Page', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -25,14 +36,11 @@ class ProfilePage extends StatelessWidget {
   }
 
   void _logout(BuildContext context) {
-    // Example logout functionality
-    // Assume you're using Firebase Authentication for this example
     FirebaseAuth.instance.signOut().then((value) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     }).catchError((error) {
-      // Handle errors or notify user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Logout failed: ${error.toString()}")),
       );
