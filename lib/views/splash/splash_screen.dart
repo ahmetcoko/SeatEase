@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             ),
             SizedBox(height: 30), // Space between the image and the text
             Text(
-              'SetEase',
+              'SeatEase',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

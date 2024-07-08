@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Text titleText() {
     return Text(
-      "Welcome to \n    SetEase",
+      "Welcome to \n   SeatEase",
       style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
     );
   }

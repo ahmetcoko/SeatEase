@@ -34,12 +34,14 @@ dependencies:
   firebase_core: ^3.1.1  # Consider upgrading this as well if there's a compatible newer version
   firebase_auth: ^5.1.1
   cloud_firestore: ^5.0.2  # Upgraded version
-  intl: ^0.17.0
+  intl: ^0.19.0
   table_calendar: ^3.0.5
   image_picker: ^1.1.2
   provider: ^6.1.2
   firebase_storage: ^12.1.0
   cached_network_image: ^3.1.0
+  flutter_bloc: ^8.1.6
+  awesome_notifications: ^0.9.3+1
 
 
 dev_dependencies:

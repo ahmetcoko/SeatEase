@@ -132,7 +132,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     backgroundColor: Colors.grey.shade800,
     backgroundImage: _profileImageUrl != null
         ? CachedNetworkImageProvider(_profileImageUrl!)
-        : AssetImage('assets/placeholder.jpg'),
+        : AssetImage('assets/images/event.png'),
   );
 
 

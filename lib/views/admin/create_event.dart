@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
@@ -146,6 +147,27 @@ class _CreateEventState extends State<CreateEvent> {
     }
   }
 
+
+
+  void sendNotification(String eventName) {
+    try {
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+          channelKey: 'basic_channel',
+          title: 'New Event Created',
+          body: 'A new event "$eventName" has been created!',
+          notificationLayout: NotificationLayout.Default,
+        ),
+      );
+      print("Notification sent for event: $eventName");
+    } catch (e) {
+      print("Error sending notification: $e");
+    }
+  }
+
+
+
   void _createEvent() {
     if (_formKey.currentState!.validate()) {
       if (_selectedDate != null && _selectedTime != null) {
@@ -171,6 +193,7 @@ class _CreateEventState extends State<CreateEvent> {
         }).then((result) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Event created successfully')));
           _clearForm();
+          sendNotification(_nameController.text);
         }).catchError((error) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create event')));
         });
