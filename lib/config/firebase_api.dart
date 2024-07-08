@@ -1,3 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+
+
 class FirebaseApi {
   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -5,7 +11,7 @@ class FirebaseApi {
   static Future<void> initNotifications() async {
     // Initialize local notifications
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/launcher_icon');
     final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
@@ -37,6 +43,8 @@ class FirebaseApi {
       }
     });
 
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     // Subscribe to a topic
     _firebaseMessaging.subscribeToTopic('allUsers');
   }
@@ -44,8 +52,9 @@ class FirebaseApi {
   static Future<void> _showNotification(RemoteNotification notification) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-      'your channel id',
-      'your channel name',
+      'channel id',
+      'channel name',
+      icon: "@mipmap/launcher_icon",
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
@@ -69,4 +78,23 @@ class FirebaseApi {
   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print("Handling a background message: ${message.messageId}");
   }
+
+  static void checkEventCapacityAndUpdate(String eventId) async {
+    var eventDocument = FirebaseFirestore.instance.collection('Events').doc(eventId);
+    var eventData = await eventDocument.get();
+    if (eventData.exists) {
+      var data = eventData.data();
+      if (data?['participants'].length >= data?['capacity']) {
+        // Trigger a notification
+        _showNotification(
+            RemoteNotification(
+                title: 'Event Full',
+                body: "${data?['name']} has reached its full capacity!"
+            )
+        );
+      }
+    }
+  }
+
 }
+
