@@ -14,10 +14,9 @@ import 'views/splash/login_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseApi.registerBackgroundHandler(); // Register background handler before initializing the app
   await FirebaseApi.initNotifications();
-  FirebaseMessaging.instance.subscribeToTopic('allUsers');
 
-  // Get the system's theme mode
   var brightness = WidgetsBinding.instance.window.platformBrightness;
   bool isDarkMode = brightness == Brightness.dark;
 
