@@ -16,6 +16,7 @@ void main() async {
   await Firebase.initializeApp();
   FirebaseApi.registerBackgroundHandler(); // Register background handler before initializing the app
   await FirebaseApi.initNotifications();
+  FirebaseMessaging.instance.subscribeToTopic('allUsers');
 
   var brightness = WidgetsBinding.instance.window.platformBrightness;
   bool isDarkMode = brightness == Brightness.dark;

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../config/firebase_api.dart';
+
 
 class UserEventsPage extends StatefulWidget {
   @override
@@ -353,10 +355,16 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Seat $seatId reserved successfully!"))
       );
+
+      // Check and notify if the event is full
+      FirebaseApi.checkEventCapacityAndUpdate(documentId);
     }).catchError((error) {
-      SnackBar(content: Text("Failed to reserve seat: $error"));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to reserve seat: $error"))
+      );
     });
   }
+
 
 
 
