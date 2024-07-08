@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 
 import '../../model/events.dart';
 
@@ -162,10 +164,26 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   void _deleteEvent(String eventId) async {
-    await FirebaseFirestore.instance.collection('Events').doc(eventId).delete();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Event deleted successfully')),
-    );
+    try {
+      // Call the cloud function to delete the event and send a notification
+      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deleteEvent');
+      final response = await callable.call(<String, dynamic>{
+        'eventId': eventId,
+      });
+      if (response.data['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Event deleted successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete event')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting event: $e')),
+      );
+    }
   }
 
 
