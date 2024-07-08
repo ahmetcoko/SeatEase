@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:seat_ease/views/splash/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
@@ -158,6 +159,7 @@ class _LoginPageState extends State<LoginPage> {
           // Fetch user type from Firestore and cast the data
           DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(result.user!.uid).get();
           Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+          FirebaseMessaging.instance.subscribeToTopic('allUsers');
           if (userDoc.exists && userData['usertype'] == 'admin') {
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => AdminPage()),
