@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../config/firebase_api.dart';
 
@@ -113,7 +114,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("User Events"),
+        title: Text(AppLocalizations.of(context)!.userEventsTitle),
         centerTitle: true,
         actions: [
           IconButton(
@@ -225,7 +226,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Text(
-                                "Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
+                                "${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
                                 style: TextStyle(fontWeight: FontWeight.normal),
                               ),
                               trailing: Image.asset(
@@ -242,7 +243,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "Description",
+                                    AppLocalizations.of(context)!.description,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                   ),
@@ -277,14 +278,14 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                         color: Colors.red.shade800,
                                         margin: EdgeInsets.symmetric(horizontal: 10),
                                       ),
-                                      Text("Full"),
+                                      Text(AppLocalizations.of(context)!.full),
                                       Container(
                                         width: 20,
                                         height: 20,
                                         color: Colors.green.shade200,
                                         margin: EdgeInsets.symmetric(horizontal: 10),
                                       ),
-                                      Text("Empty"),
+                                      Text(AppLocalizations.of(context)!.empty),
                                     ],
                                   ),
                                 )
@@ -313,7 +314,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
     if (hasReserved) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("You have already reserved a seat in this event."))
+          SnackBar(content: Text(AppLocalizations.of(context)!.reservationDialog))
       );
       return;  // Exit if the user has already reserved a seat
     }
@@ -322,17 +323,17 @@ class _UserEventsPageState extends State<UserEventsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm Seat"),
-          content: Text("Do you want to reserve seat $seatId?"),
+          title: Text(AppLocalizations.of(context)!.confirmSeat),
+          content: Text("${AppLocalizations.of(context)!.approval} $seatId?"),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancel"),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Confirm"),
+              child: Text(AppLocalizations.of(context)!.confirm),
               onPressed: () {
                 _reserveSeat(seatId, documentId);
                 Navigator.of(context).pop();
@@ -351,14 +352,14 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ])
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Seat $seatId reserved successfully!"))
+          SnackBar(content: Text("${AppLocalizations.of(context)!.reserveMessage} $seatId"))
       );
 
       // Check and notify if the event is full
       FirebaseApi.checkEventCapacityAndUpdate(documentId);
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to reserve seat: $error"))
+          SnackBar(content: Text("${AppLocalizations.of(context)!.failedMessage} $error"))
       );
     });
   }

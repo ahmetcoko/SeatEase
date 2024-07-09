@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/user/user_events.dart';
 import 'package:seat_ease/views/user/user_profile.dart';
 import 'package:seat_ease/views/user/user_settings.dart';
@@ -41,18 +42,18 @@ class _UserPageState extends State<UserPage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
-            label: 'Events',
+            label: AppLocalizations.of(context)!.userEventsTitle,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: AppLocalizations.of(context)!.settingsMainTitle,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: AppLocalizations.of(context)!.profile,
           ),
         ],
         currentIndex: _selectedIndex,

@@ -27,6 +27,28 @@ class AppLocalizations {
 
   String get seat => _localizedValues[locale.languageCode]!['seat']!;
 
+  String get userEventsTitle => _localizedValues[locale.languageCode]!['userEventsTitle']!;
+
+  String get full => _localizedValues[locale.languageCode]!['full']!;
+
+  String get empty => _localizedValues[locale.languageCode]!['empty']!;
+
+  String get reservationDialog => _localizedValues[locale.languageCode]!['reservationDialog']!;
+
+  String get confirmSeat => _localizedValues[locale.languageCode]!['confirmSeat']!;
+
+  String get approval => _localizedValues[locale.languageCode]!['approval']!;
+
+  String get cancel => _localizedValues[locale.languageCode]!['cancel']!;
+
+  String get confirm => _localizedValues[locale.languageCode]!['confirm']!;
+
+  String get reserveMessage => _localizedValues[locale.languageCode]!['reserveMessage']!;
+
+  String get failedMessage => _localizedValues[locale.languageCode]!['failedMessage']!;
+
+  String get profile => _localizedValues[locale.languageCode]!['profile']!;
+
 
 
 
@@ -49,6 +71,17 @@ class AppLocalizations {
       'cancelReservation': 'Cancel Reservation',
       'description': 'Description',
       'seat': 'Seat',
+      'userEventsTitle': 'Events',
+      'full': 'Full',
+      'empty': 'Empty',
+      'reservationDialog': 'You have already reserved a seat in this event.',
+      'confirmSeat': 'Confirm Seat',
+      'approval': 'Do you want to reserve seat',
+      'cancel': 'Cancel',
+      'confirm': 'Confirm',
+      'reserveMessage' : "Seat reserved successfully",
+      'failedMessage' : 'Seat reservation failed',
+      'profile': 'Profile',
 
     },
     'tr': {
@@ -65,6 +98,17 @@ class AppLocalizations {
       'cancelReservation': 'Rezervasyon İptal',
       'description': 'Açıklama',
       'seat': 'Koltuk',
+      'userEventsTitle': 'Etkinlikler',
+      'full': 'Dolu',
+      'empty': 'Boş',
+      'reservationDialog': 'Bu etkinlik için zaten bir koltuk rezerve ettiniz.',
+      'confirmSeat': 'Koltuğu Onayla',
+      'approval': 'Koltuk rezervasyonu yapmak istiyor musunuz',
+      'cancel': 'İptal',
+      'confirm': 'Onayla',
+      'reserveMessage' : "Koltuk başarıyla rezerve edildi",
+      'failedMessage' : 'Koltuk rezervasyonu başarısız oldu',
+      'profile': 'Profil',
     },
   };
 
