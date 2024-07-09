@@ -11,12 +11,12 @@ class EventsMedia extends StatefulWidget {
 }
 
 class _EventsMediaPageState extends State<EventsMedia> {
+  TextEditingController _commentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
   }
-
 
   Future<String> _fetchUserFullName() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -37,6 +37,45 @@ class _EventsMediaPageState extends State<EventsMedia> {
     return "Unknown User";
   }
 
+  Future<void> _postComment(String eventId, String comment, String userName) async {
+    if (comment.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
+        'comments': FieldValue.arrayUnion([{'name': userName, 'comment': comment}])
+      });
+      _commentController.clear();
+    }
+  }
+
+  Widget _buildCommentsSection(List<dynamic> comments, String eventId, String currentUser) {
+    if (comments.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Center(child: Text("No comments made yet")),
+      );
+    }
+    return ListView(
+      physics: NeverScrollableScrollPhysics(), // to disable scrolling in nested list
+      shrinkWrap: true,
+      children: comments.map((comment) {
+        return ListTile(
+          title: Text(comment['name']),
+          subtitle: Text(comment['comment']),
+          trailing: comment['name'] == currentUser ? IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _deleteComment(eventId, comment),
+          ) : null,
+        );
+      }).toList(),
+    );
+  }
+
+  Future<void> _deleteComment(String eventId, Map<String, dynamic> commentToDelete) async {
+    await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
+      'comments': FieldValue.arrayRemove([commentToDelete])
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,52 +87,33 @@ class _EventsMediaPageState extends State<EventsMedia> {
         future: _fetchUserFullName(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator()); // Show loading indicator while waiting
+            return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError || !snapshot.hasData) {
             return Center(child: Text("Failed to fetch user data or user not found"));
           }
           String currentUserName = snapshot.data!;
-          // Continue with your logic here once the data is available
           return StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('Events')
-                .where('time', isLessThan: Timestamp.fromDate(DateTime.now())) // Filtering for past events
+                .where('time', isLessThan: Timestamp.fromDate(DateTime.now()))
                 .snapshots(),
             builder: (context, eventSnapshot) {
-              if (eventSnapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Ensure this also handles loading gracefully
-              }
-              if (eventSnapshot.hasError) {
-                return Text('Something went wrong');
-              }
+              if (eventSnapshot.hasError) return Text('Something went wrong');
               if (eventSnapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
-              }
-              var joinedEvents = eventSnapshot.data!.docs.where((DocumentSnapshot document) {
-                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                return data['participants'].any((participant) => participant['name'] == currentUserName);
-              }).toList();
-
-              if (joinedEvents.isEmpty) {
-                return Center(child: Text(AppLocalizations.of(context)!.infoEvents));
               }
               return ListView(
                 children: eventSnapshot.data!.docs.map((DocumentSnapshot document) {
                   Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                  List<dynamic> comments = data['comments'] ?? [];
                   bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
                   if (!isUserJoined) return Container(); // Skip events the user hasn't joined
-
-
                   return Card(
                     child: ExpansionTile(
                       leading: Image.asset('assets/images/event.png', width: 40),
                       title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text("${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
-                      trailing: Image.asset(
-                        'assets/images/comment.png',
-                        width: 24,
-                      ),
-                      children: <Widget>[
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
                           child: Center(
@@ -103,6 +123,28 @@ class _EventsMediaPageState extends State<EventsMedia> {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(data['description'] ?? 'No description provided'),
+                        ),
+                        _buildCommentsSection(comments, document.id, currentUserName),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _commentController,
+                                  decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!.addComment,
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.send),
+                                onPressed: () => _postComment(document.id, _commentController.text, currentUserName),
+                              )
+                            ],
+                          ),
                         ),
                       ],
                     ),
