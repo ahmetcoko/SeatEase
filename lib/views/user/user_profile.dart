@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/user/user_setting_page.dart';
 import '../splash/login_page.dart';
 import 'dart:io';
@@ -25,7 +26,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   void initState() {
     super.initState();
-    print("Initializing user profile page.");
     _loadProfilePicture();
   }
 
@@ -38,7 +38,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
         setState(() {
           _image = tempImage; // Temporarily display selected image
         });
-        print("Image picked: ${tempImage.path}");
         await _uploadProfilePicture(tempImage); // Ensure upload completes before setting state
       } else {
         print("No image selected");
@@ -166,7 +165,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text(AppLocalizations.of(context)!.userProfileTitle),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.logout),
@@ -228,7 +227,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }).toList();
 
                         if (joinedEvents.isEmpty) {
-                          return Center(child: Text("You haven't joined any events"));
+                          return Center(child: Text(AppLocalizations.of(context)!.infoEvents));
                         }
                         return ListView(
                           children: eventSnapshot.data!.docs.map((DocumentSnapshot document) {
@@ -243,12 +242,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               child: ExpansionTile(
                                 leading: Image.asset('assets/images/event.png', width: 40),
                                 title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
-                                subtitle: Text("Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
+                                subtitle: Text("${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
                                 children: <Widget>[
                                   ElevatedButton(
                                     onPressed: () => _cancelReservation(document.id, currentUserName , userSeat),
                                     child: Text(
-                                      "Cancel Reservation",
+                                      AppLocalizations.of(context)!.cancelReservation,
                                       style: TextStyle(
                                         color: Colors.pinkAccent,
                                       ),
@@ -257,7 +256,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
                                     child: Center(
-                                      child: Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      child: Text(AppLocalizations.of(context)!.description, style: TextStyle(fontWeight: FontWeight.bold)),
                                     ),
                                   ),
                                   Padding(
@@ -267,7 +266,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
-                                      child: Text("Seat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                      child: Text(AppLocalizations.of(context)!.seat, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                     ),
                                   ),
                                   Padding(

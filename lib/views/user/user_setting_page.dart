@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import '../../utils/app_theme.dart';
 import '../theme_changer.dart';
 
@@ -26,14 +27,14 @@ class _SettingsUserPageState extends State<SettingsUserPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: Text(AppLocalizations.of(context)!.settingsMainTitle),
         centerTitle: true,
       ),
       body: ListView(
         children: [
           SwitchListTile(
-            title: Text("Theme"),
-            subtitle: Text(isDarkTheme ? "Dark Theme" : "Light Theme"),
+            title: Text(AppLocalizations.of(context)!.themTitle),
+            subtitle: Text(isDarkTheme ? (AppLocalizations.of(context)!.darkTheme) : (AppLocalizations.of(context)!.lightTheme)),
             value: isDarkTheme,
             onChanged: (value) {
               setState(() {
@@ -45,7 +46,7 @@ class _SettingsUserPageState extends State<SettingsUserPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Text("Language", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: Text(AppLocalizations.of(context)!.language, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),

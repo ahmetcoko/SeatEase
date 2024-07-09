@@ -1,5 +1,15 @@
 {
   "userSettingsPage": "Kullanıcı Ayarları Sayfası",
   "settingsTitle": "Kullanıcı Ayarları",
+  "settingsMainTitle" : "Ayarlar",
+  "themeTitle": "Tema",
+  "darkTheme": "Karanlık Tema",
+  "lightTheme": "Parlak Tema",
+  "languageTitle": "Dil",
+  "userProfileTitle": "Profil",
+  "infoText": "Henüz bir davete katılmadınız",
+  "dateTime": "Tarih ve Saat",
+  "cancelReservation": "Rezervasyon İptal",
+  "Description" : "Açıklama"
 }
 

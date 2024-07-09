@@ -1,4 +1,14 @@
 {
   "userSettingsPage": "User Settings Page",
   "settingsTitle": "User Settings",
+  "settingsMainTitle" : "Settings",
+  "themeTitle": "Theme",
+  "darkTheme": "Dark Theme",
+  "lightTheme": "Light Theme",
+  "languageTitle": "Language",
+  "userProfileTitle": "Profile",
+  "infoText": "You haven't joined any events",
+  "dateTime": "Date & Time",
+  "cancelReservation": "Cancel Reservation",
+  "Description" : "Description"
 }
