@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../utils/app_theme.dart';
 import '../theme_changer.dart';
 
@@ -20,26 +21,53 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeChanger = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Admin Settings"),
+        title: Text(AppLocalizations.of(context)!.settingsMainTitle),
         centerTitle: true,
       ),
       body: ListView(
         children: [
           SwitchListTile(
-            title: Text("Theme"),
-            subtitle: Text(isDarkTheme ? "Dark Theme" : "Light Theme"),
+            title: Text(AppLocalizations.of(context)!.themTitle),
+            subtitle: Text(isDarkTheme ? (AppLocalizations.of(context)!.darkTheme) : (AppLocalizations.of(context)!.lightTheme)),
             value: isDarkTheme,
-            onChanged: (bool value) {
+            onChanged: (value) {
               setState(() {
                 isDarkTheme = value;
-                Provider.of<ThemeChanger>(context, listen: false).setTheme(
-                    isDarkTheme ? AppTheme.darkTheme : AppTheme.lightTheme
-                );
+                themeChanger.setTheme(isDarkTheme ? AppTheme.darkTheme : AppTheme.lightTheme);
               });
             },
             secondary: Icon(isDarkTheme ? Icons.dark_mode : Icons.light_mode),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(AppLocalizations.of(context)!.language, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).canvasColor,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: themeChanger.getLocale().languageCode,
+                icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).iconTheme.color),
+                isExpanded: true,
+                items: <String>['en', 'tr'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value.toUpperCase(), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  themeChanger.setLocale(Locale(newValue!));
+                },
+              ),
+            ),
           ),
         ],
       ),

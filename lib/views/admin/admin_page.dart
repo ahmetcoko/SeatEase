@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/admin/profile_page.dart';
 import 'package:seat_ease/views/admin/create_event.dart';
 
@@ -40,18 +41,18 @@ class _AdminPageState extends State<AdminPage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.event), // Adjust the size as needed
-            label: 'Events',
+            label: AppLocalizations.of(context)!.userEventsTitle,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.create),
-            label: 'Create Event',
+            label: AppLocalizations.of(context)!.createEvent,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: AppLocalizations.of(context)!.profile,
           ),
         ],
         currentIndex: _selectedIndex,

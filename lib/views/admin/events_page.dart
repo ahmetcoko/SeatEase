@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 
+import '../../l10n/app_localizations.dart';
 import '../../model/events.dart';
 
 
@@ -21,7 +22,7 @@ class _EventsPageState extends State<EventsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Events"),
+        title: Text(AppLocalizations.of(context)!.userEventsTitle),
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -47,7 +48,7 @@ class _EventsPageState extends State<EventsPage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      "Date-Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
+                      "${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())} - ${data['participants'].length}/${data['capacity']}",
                       style: TextStyle(fontWeight: FontWeight.normal),
                     ),
                     trailing: Image.asset(
@@ -72,7 +73,7 @@ class _EventsPageState extends State<EventsPage> {
                               minimumSize: Size(150, 50),
                             ),
                             child: Text(
-                              "Change Date-Time",
+                              AppLocalizations.of(context)!.changeDateTime,
                               style: TextStyle(color: Colors.pinkAccent),
                             ),
                           ),
@@ -86,7 +87,7 @@ class _EventsPageState extends State<EventsPage> {
                               minimumSize: Size(150, 50),
                             ),
                             child: Text(
-                              "Delete Event",
+                              AppLocalizations.of(context)!.deleteEvent,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -97,10 +98,10 @@ class _EventsPageState extends State<EventsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(AppLocalizations.of(context)!.description, style: TextStyle(fontWeight: FontWeight.bold)),
                             Text(data['description'] ?? 'No description provided'),
                             SizedBox(height: 10),
-                            Text("Participants", style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(AppLocalizations.of(context)!.participant, style: TextStyle(fontWeight: FontWeight.bold)),
                             ..._buildParticipantWidgets(data['participants']),
                           ],
                         ),
@@ -119,7 +120,7 @@ class _EventsPageState extends State<EventsPage> {
   List<Widget> _buildParticipantWidgets(List<dynamic> participants) {
     return participants.map<Widget>((participant) {
       if (participant is Map<String, dynamic>) {
-        return Text("${participant['name']} - Seat: ${participant['seat']}");
+        return Text("${participant['name']} - ${AppLocalizations.of(context)!.seat} ${participant['seat']}");
       } else if (participant is String) {
         // Handle the case where a participant is a String
         return Text(participant);
@@ -158,7 +159,7 @@ class _EventsPageState extends State<EventsPage> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Event date-time updated successfully')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.dateTimeUpdate)),
       );
     }
   }
@@ -172,7 +173,7 @@ class _EventsPageState extends State<EventsPage> {
       });
       if (response.data['status'] == 'success') {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Event deleted successfully')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.eventDeleted)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

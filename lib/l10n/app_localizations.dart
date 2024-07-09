@@ -95,6 +95,36 @@ class AppLocalizations {
 
   String get tryAgain => _localizedValues[locale.languageCode]!['tryAgain']!;
 
+  String get createEvent => _localizedValues[locale.languageCode]!['createEvent']!;
+
+  String get eventName => _localizedValues[locale.languageCode]!['eventName']!;
+
+  String get eventDate => _localizedValues[locale.languageCode]!['eventDate']!;
+
+  String get eventTime => _localizedValues[locale.languageCode]!['eventTime']!;
+
+  String get eventDescription => _localizedValues[locale.languageCode]!['eventDescription']!;
+
+  String get rowNumber => _localizedValues[locale.languageCode]!['rowNumber']!;
+
+  String get columnNumber => _localizedValues[locale.languageCode]!['columnNumber']!;
+
+  String get eventNameCheck => _localizedValues[locale.languageCode]!['eventNameCheck']!;
+
+  String get rowNumberCheck => _localizedValues[locale.languageCode]!['rowNumberCheck']!;
+
+  String get columnNumberCheck => _localizedValues[locale.languageCode]!['columnNumberCheck']!;
+
+  String get changeDateTime => _localizedValues[locale.languageCode]!['changeDateTime']!;
+
+  String get deleteEvent => _localizedValues[locale.languageCode]!['deleteEvent']!;
+
+  String get participant => _localizedValues[locale.languageCode]!['participant']!;
+
+  String get dateTimeUpdate => _localizedValues[locale.languageCode]!['dateTimeUpdate']!;
+
+  String get eventDeleted => _localizedValues[locale.languageCode]!['eventDeleted']!;
+
 
 
 
@@ -159,6 +189,21 @@ class AppLocalizations {
       'enterPassword': 'Enter your password',
       'loginError': 'Login Error',
       'tryAgain': 'Try Again',
+      'createEvent': 'Create Event',
+      'eventName': 'Event Name',
+      'eventDate': 'Event Date',
+      'eventTime': 'Event Time',
+      'eventDescription': 'Event Description',
+      'rowNumber': 'Row Number',
+      'columnNumber': 'Column Number',
+      'eventNameCheck': 'Please enter a name for the event',
+      'rowNumberCheck': 'Please enter a valid number less than 10',
+      'columnNumberCheck': 'Please enter a valid number less than 10',
+      'changeDateTime': 'Change Date-Time',
+      'deleteEvent': 'Delete Event',
+      'participant': 'Participants',
+      'dateTimeUpdate': 'Event date-time updated successfully',
+      'eventDeleted': 'Event deleted successfully',
 
 
     },
@@ -212,6 +257,21 @@ class AppLocalizations {
       'enterPassword': 'Şifrenizi girin',
       'loginError': 'Giriş Hatası',
       'tryAgain': 'Tekrar Deneyin',
+      'createEvent': 'Etkinlik Oluştur',
+      'eventName': 'Etkinlik Adı',
+      'eventDate': 'Etkinlik Tarihi',
+      'eventTime': 'Etkinlik Saati',
+      'eventDescription': 'Etkinlik Açıklaması',
+      'rowNumber': 'Sıra Numarası',
+      'columnNumber': 'Kolon Numarası',
+      'eventNameCheck': 'Lütfen etkinlik için bir isim girin',
+      'rowNumberCheck': 'Lütfen 10 dan küçük geçerli bir numara girin',
+      'columnNumberCheck': 'Lütfen 10 dan küçük geçerli bir numara girin',
+      'changeDateTime': 'Tarih-Saat Değiştir',
+      'deleteEvent': 'Etkinliği Sil',
+      'participant': 'Katılımcılar',
+      'dateTimeUpdate': 'Etkinlik tarih-saat bilgisi başarıyla güncellendi',
+      'eventDeleted': 'Etkinlik başarıyla silindi',
 
 
     },

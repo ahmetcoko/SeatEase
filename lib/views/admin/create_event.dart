@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 
 class CreateEvent extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _CreateEventState extends State<CreateEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Event"),
+        title: Text(AppLocalizations.of(context)!.createEvent),
         centerTitle: true,  // This will center the title text within the AppBar
       ),
       body: SingleChildScrollView(
@@ -36,10 +37,10 @@ class _CreateEventState extends State<CreateEvent> {
             children: <Widget>[
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.eventName),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a name for the event';
+                    return AppLocalizations.of(context)!.eventNameCheck;
                   }
                   return null;
                 },
@@ -47,11 +48,11 @@ class _CreateEventState extends State<CreateEvent> {
               SizedBox(height: 20),
               TextFormField(
                 controller: _rowController,
-                decoration: InputDecoration(labelText: 'Row'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.rowNumber),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || int.tryParse(value) == null || int.parse(value) > 10) {
-                    return 'Please enter a valid number less than 10';
+                    return AppLocalizations.of(context)!.rowNumberCheck;
                   }
                   return null;
                 },
@@ -59,11 +60,11 @@ class _CreateEventState extends State<CreateEvent> {
               SizedBox(height: 20),
               TextFormField(
                 controller: _columnController,
-                decoration: InputDecoration(labelText: 'Column'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.columnNumber),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || int.tryParse(value) == null || int.parse(value) > 10) {
-                    return 'Please enter a valid number less than 10';
+                    return AppLocalizations.of(context)!.columnNumberCheck;
                   }
                   return null;
                 },
@@ -74,7 +75,7 @@ class _CreateEventState extends State<CreateEvent> {
                 child: AbsorbPointer(
                   child: TextFormField(
                     decoration: InputDecoration(
-                      labelText: _selectedDate == null ? 'Date' : DateFormat.yMd().format(_selectedDate!),
+                      labelText: _selectedDate == null ? AppLocalizations.of(context)!.eventDate : DateFormat.yMd().format(_selectedDate!),
                     ),
                   ),
                 ),
@@ -85,7 +86,7 @@ class _CreateEventState extends State<CreateEvent> {
                 child: AbsorbPointer(
                   child: TextFormField(
                     decoration: InputDecoration(
-                      labelText: _selectedTime == null ? 'Time' : _selectedTime!.format(context),
+                      labelText: _selectedTime == null ? AppLocalizations.of(context)!.eventTime : _selectedTime!.format(context),
                     ),
                   ),
                 ),
@@ -93,7 +94,7 @@ class _CreateEventState extends State<CreateEvent> {
               SizedBox(height: 20),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.eventDescription),
                 maxLines: 3,
               ),
               SizedBox(height: 30),
@@ -111,7 +112,7 @@ class _CreateEventState extends State<CreateEvent> {
                       fontSize: 16,
                     ),
                   ),
-                  child: Text('Create Event'),
+                  child: Text(AppLocalizations.of(context)!.createEvent),
                 ),
               ),
             ],
