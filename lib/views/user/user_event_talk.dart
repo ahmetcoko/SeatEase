@@ -5,12 +5,12 @@ import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 
 
-class UserSettingsPage extends StatefulWidget {
+class EventsMedia extends StatefulWidget {
   @override
-  _UserSettingsPageState createState() => _UserSettingsPageState();
+  _EventsMediaPageState createState() => _EventsMediaPageState();
 }
 
-class _UserSettingsPageState extends State<UserSettingsPage> {
+class _EventsMediaPageState extends State<EventsMedia> {
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.userSettingsPage),
+        title: Text(AppLocalizations.of(context)!.eventTalk),
         centerTitle: true,
       ),
       body: FutureBuilder<String>(
@@ -89,6 +89,10 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                       leading: Image.asset('assets/images/event.png', width: 40),
                       title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text("${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
+                      trailing: Image.asset(
+                        'assets/images/comment.png',
+                        width: 24,
+                      ),
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -99,22 +103,6 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(data['description'] ?? 'No description provided'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Text(AppLocalizations.of(context)!.seat, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Text(
-                              data['participants']
-                                  .firstWhere((participant) => participant['name'] == currentUserName, orElse: () => {'seat': 'No Seat Assigned'})['seat'],
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
                         ),
                       ],
                     ),

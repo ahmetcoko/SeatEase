@@ -85,6 +85,7 @@ flutter:
     - assets/images/devent.jpg
     - assets/images/reserved.png
     - assets/images/res2.png
+    - assets/images/comment.png
 
 
   generate: true

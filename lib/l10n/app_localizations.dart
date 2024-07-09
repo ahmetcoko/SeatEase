@@ -125,6 +125,8 @@ class AppLocalizations {
 
   String get eventDeleted => _localizedValues[locale.languageCode]!['eventDeleted']!;
 
+  String get eventTalk => _localizedValues[locale.languageCode]!['eventTalk']!;
+
 
 
 
@@ -204,6 +206,7 @@ class AppLocalizations {
       'participant': 'Participants',
       'dateTimeUpdate': 'Event date-time updated successfully',
       'eventDeleted': 'Event deleted successfully',
+      'eventTalk': 'Event Talk',
 
 
     },
@@ -272,6 +275,7 @@ class AppLocalizations {
       'participant': 'Katılımcılar',
       'dateTimeUpdate': 'Etkinlik tarih-saat bilgisi başarıyla güncellendi',
       'eventDeleted': 'Etkinlik başarıyla silindi',
+      'eventTalk': 'Yorumlar',
 
 
     },

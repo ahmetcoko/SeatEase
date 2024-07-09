@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/user/user_events.dart';
 import 'package:seat_ease/views/user/user_profile.dart';
-import 'package:seat_ease/views/user/user_settings.dart';
+import 'package:seat_ease/views/user/user_event_talk.dart';
 
 
 
@@ -16,7 +16,7 @@ class _UserPageState extends State<UserPage> {
 
   final List<Widget> _widgetOptions = [
     UserEventsPage(), // Assumes you have an EventsPage widget
-    UserSettingsPage(), // Assumes you have a SettingsPage widget
+    EventsMedia(), // Assumes you have a SettingsPage widget
     UserProfilePage(), // Assumes you have a ProfilePage widget
   ];
 
@@ -48,8 +48,8 @@ class _UserPageState extends State<UserPage> {
             label: AppLocalizations.of(context)!.userEventsTitle,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: AppLocalizations.of(context)!.settingsMainTitle,
+            icon: Icon(Icons.forum),
+            label: AppLocalizations.of(context)!.eventTalk,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
