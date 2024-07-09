@@ -5,38 +5,18 @@ import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 
 
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:seat_ease/l10n/app_localizations.dart';
-
 class UserSettingsPage extends StatefulWidget {
   @override
   _UserSettingsPageState createState() => _UserSettingsPageState();
 }
 
 class _UserSettingsPageState extends State<UserSettingsPage> {
-  late Future<List<DocumentSnapshot>> _futureExpiredEvents;
 
   @override
   void initState() {
     super.initState();
-    _futureExpiredEvents = _fetchExpiredEvents();
   }
 
-  Future<List<DocumentSnapshot>> _fetchExpiredEvents() async {
-    var userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    var now = DateTime.now();
-    var snapshot = await FirebaseFirestore.instance
-        .collection('Events')
-        .where('participants', arrayContains: {'name': userId})
-        .where('time', isLessThan: Timestamp.fromDate(now))
-        .get();
-
-    return snapshot.docs;
-  }
 
   Future<String> _fetchUserFullName() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -76,7 +56,9 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           String currentUserName = snapshot.data!;
           // Continue with your logic here once the data is available
           return StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
+            stream: FirebaseFirestore.instance.collection('Events')
+                .where('time', isLessThan: Timestamp.fromDate(DateTime.now())) // Filtering for past events
+                .snapshots(),
             builder: (context, eventSnapshot) {
               if (eventSnapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator(); // Ensure this also handles loading gracefully
@@ -101,8 +83,6 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                   bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
                   if (!isUserJoined) return Container(); // Skip events the user hasn't joined
 
-                  // Extract user's seat for the cancellation function
-                  String userSeat = data['participants'].firstWhere((p) => p['name'] == currentUserName, orElse: () => {'seat': null})['seat'];
 
                   return Card(
                     child: ExpansionTile(
@@ -148,6 +128,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
     );
   }
 }
+
 
 
 
