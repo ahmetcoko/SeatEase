@@ -21,6 +21,8 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.4.3 <4.0.0'
 
+
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -45,6 +47,10 @@ dependencies:
   firebase_messaging: ^15.0.2
   flutter_local_notifications: ^17.2.1+1
   cloud_functions: ^5.0.2
+  flutter_localizations:
+    sdk: flutter
+
+
 
 
 dev_dependencies:
@@ -79,6 +85,9 @@ flutter:
     - assets/images/devent.jpg
     - assets/images/reserved.png
     - assets/images/res2.png
+
+
+  generate: true
 
 
   # The following line ensures that the Material Icons font is
