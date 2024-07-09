@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/splash/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
@@ -58,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                     customSizedBox(),
                     CustomTextButton(
                       onPressed: () => Navigator.pushNamed(context, "/signUp"),
-                      buttonText: "Create Account",
+                      buttonText: AppLocalizations.of(context)!.createAccount,
                     ),
                   ],
                 ),
@@ -72,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Text titleText() {
     return Text(
-      "Welcome to \n   SeatEase",
+      "${AppLocalizations.of(context)!.welcome} \n   SeatEase",
       style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
     );
   }
@@ -82,9 +83,9 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Please enter your email.";
+          return AppLocalizations.of(context)!.enterEmail ;
         } else if (!value.contains('@')) {
-          return "Enter a valid email address.";
+          return AppLocalizations.of(context)!.emailValidation;
         }
         return null;
       },
@@ -92,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
         email = value!;
       },
       style: TextStyle(color: Colors.black), // Ensuring text color is black for visibility
-      decoration: customInputDecoration("Email"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.email),
     );
   }
 
@@ -100,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Please enter your password.";
+          return AppLocalizations.of(context)!.enterPassword;
         }
         return null;
       },
@@ -109,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       obscureText: true,
       style: TextStyle(color: Colors.black), // Ensuring text color is black for visibility
-      decoration: customInputDecoration("Password"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.password),
     );
   }
 
@@ -119,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
       child: TextButton(
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage())),
         child: customText(
-          "Forgot Password?",
+          AppLocalizations.of(context)!.forgotPassword,
           CustomColors.pinkColor,
         ),
       ),
@@ -138,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
           minimumSize: Size(150, 50),
         ),
         child: Text(
-          "Log-in",
+          AppLocalizations.of(context)!.login,
           style: TextStyle(
             color: Colors.pinkAccent, // Assuming you want white text for better contrast
           ),
@@ -181,8 +182,8 @@ class _LoginPageState extends State<LoginPage> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text("Login Error"),
-                content: Text(errorMessage + " Please try again."),
+                title: Text(AppLocalizations.of(context)!.loginError),
+                content: Text(errorMessage + "\n" + AppLocalizations.of(context)!.tryAgain)                           ,
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -202,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
       child: TextButton(
         onPressed: () => Navigator.pushNamed(context, "/signUp"),
         child: customText(
-          "Sign Up",
+          AppLocalizations.of(context)!.createAccount,
           CustomColors.pinkColor,
         ),
       ),

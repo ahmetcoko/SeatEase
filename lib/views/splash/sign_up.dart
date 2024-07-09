@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/splash/login_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
 import 'package:seat_ease/utils/customTextStyle.dart';
@@ -87,7 +88,7 @@ class _SignUpState extends State<SignUp> {
 
   Text titleText() {
     return Text(
-      "Welcome to \n   SeatEase",
+      "${AppLocalizations.of(context)!.welcome} \n   SeatEase",
       style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
     );
   }
@@ -100,7 +101,7 @@ class _SignUpState extends State<SignUp> {
       controller: emailController,
       validator: emailValidator,
       style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
-      decoration: customInputDecoration("Email"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.email),
       onSaved: (value) => email = value!,
     );
   }
@@ -110,7 +111,7 @@ class _SignUpState extends State<SignUp> {
       controller: fullNameController,
       validator: fullNameValidator,
       style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
-      decoration: customInputDecoration("Full Name"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.fullName),
       onSaved: (value) => fullname = value!,
     );
   }
@@ -120,7 +121,7 @@ class _SignUpState extends State<SignUp> {
       controller: usernameController,
       validator: usernameValidator,
       style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
-      decoration: customInputDecoration("Username"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.username),
       onSaved: (value) => username = value!,
     );
   }
@@ -131,7 +132,7 @@ class _SignUpState extends State<SignUp> {
       validator: passwordValidator,
       obscureText: true,
       style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
-      decoration: customInputDecoration("Password"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.password),
       onSaved: (value) => password = value!,
     );
   }
@@ -142,7 +143,7 @@ class _SignUpState extends State<SignUp> {
       validator: (value) => confirmPasswordValidator(value, passwordController.text),
       obscureText: true,
       style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
-      decoration: customInputDecoration("Confirm Password"),
+      decoration: customInputDecoration(AppLocalizations.of(context)!.confirmPassword),
       onSaved: (value) => confirmPassword = value!,
     );
   }
@@ -150,11 +151,11 @@ class _SignUpState extends State<SignUp> {
   Widget validationInfo() {
     return Column(
       children: [
-        buildValidationRow("Password must be at least 6 characters.", passwordValid),
-        buildValidationRow("Passwords must match.", confirmPasswordValid),
-        buildValidationRow("Email must contain '@'.", emailValid),
-        buildValidationRow("Full Name must be within 20 characters and contain a space.", fullNameValid),
-        buildValidationRow("Username must be within 20 characters.", usernameValid),
+        buildValidationRow(AppLocalizations.of(context)!.passwordValidation, passwordValid),
+        buildValidationRow(AppLocalizations.of(context)!.confirmPasswordValidation, confirmPasswordValid),
+        buildValidationRow(AppLocalizations.of(context)!.emailValidation, emailValid),
+        buildValidationRow(AppLocalizations.of(context)!.fullNameValidation, fullNameValid),
+        buildValidationRow(AppLocalizations.of(context)!.usernameValidation, usernameValid),
       ],
     );
   }
@@ -195,21 +196,21 @@ class _SignUpState extends State<SignUp> {
   // Validators
   String? emailValidator(String? value) {
     if (value!.isEmpty || !value.contains("@")) {
-      return "Please enter a valid email with '@'.";
+      return AppLocalizations.of(context)!.emailValidation;
     }
     return null;
   }
 
   String? fullNameValidator(String? value) {
     if (value!.isEmpty || !value.contains(" ") || value.length > 20) {
-      return "Full Name should include a space and be max 20 characters.";
+      return AppLocalizations.of(context)!.fullNameValidation;
     }
     return null;
   }
 
   String? usernameValidator(String? value) {
     if (value!.isEmpty || value.length > 20) {
-      return "Username should be max 20 characters.";
+      return AppLocalizations.of(context)!.usernameValidation;
     }
     return null;
   }
@@ -218,16 +219,16 @@ class _SignUpState extends State<SignUp> {
     if (value == null || value.isEmpty) {
       return 'Please enter a password.';
     } else if (value.length < 6) {
-      return 'Password must be at least 6 characters long.';
+      return AppLocalizations.of(context)!.passwordValidation;
     }
     return null;
   }
 
   String? confirmPasswordValidator(String? value, String password) {
     if (value!.isEmpty) {
-      return "Please confirm your password.";
+      return AppLocalizations.of(context)!.passwordValidationRequest;
     } else if (value != password) {
-      return "Passwords do not match.";
+      return AppLocalizations.of(context)!.confirmPasswordValidation;
     }
     return null;
   }
@@ -244,7 +245,7 @@ class _SignUpState extends State<SignUp> {
           minimumSize: Size(150, 50),
         ),
         child: Text(
-          "Create Account",
+          AppLocalizations.of(context)!.createAccount,
           style: TextStyle(
             color: Colors.pinkAccent, // Ensuring text is visible against the button color
           ),
@@ -297,7 +298,7 @@ class _SignUpState extends State<SignUp> {
     return Center(
       child: TextButton(
         onPressed: () => Navigator.pushNamed(context, "/loginPage"),
-        child: customText("Back to Log-in page", CustomColors.pinkColor),
+        child: customText(AppLocalizations.of(context)!.backToLogin, CustomColors.pinkColor),
       ),
     );
   }

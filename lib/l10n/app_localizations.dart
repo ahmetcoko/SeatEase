@@ -49,6 +49,60 @@ class AppLocalizations {
 
   String get profile => _localizedValues[locale.languageCode]!['profile']!;
 
+  String get welcome => _localizedValues[locale.languageCode]!['welcome']!;
+
+  String get email => _localizedValues[locale.languageCode]!['email']!;
+
+  String get password => _localizedValues[locale.languageCode]!['password']!;
+
+  String get login => _localizedValues[locale.languageCode]!['login']!;
+
+  String get username => _localizedValues[locale.languageCode]!['username']!;
+
+  String get fullName => _localizedValues[locale.languageCode]!['fullName']!;
+
+  String get confirmPassword => _localizedValues[locale.languageCode]!['confirmPassword']!;
+
+  String get createAccount => _localizedValues[locale.languageCode]!['createAccount']!;
+
+  String get backToLogin => _localizedValues[locale.languageCode]!['backToLogin']!;
+
+  String get passwordValidation => _localizedValues[locale.languageCode]!['passwordValidation']!;
+
+  String get confirmPasswordValidation => _localizedValues[locale.languageCode]!['confirmPasswordValidation']!;
+
+  String get emailValidation => _localizedValues[locale.languageCode]!['emailValidation']!;
+
+  String get usernameValidation => _localizedValues[locale.languageCode]!['usernameValidation']!;
+
+  String get fullNameValidation => _localizedValues[locale.languageCode]!['fullNameValidation']!;
+
+  String get passwordValidationRequest => _localizedValues[locale.languageCode]!['passwordValidationRequest']!;
+
+  String get forgotPassword => _localizedValues[locale.languageCode]!['forgotPassword']!;
+
+  String get sendResetMail => _localizedValues[locale.languageCode]!['sendResetMail']!;
+
+  String get infoResetSended => _localizedValues[locale.languageCode]!['infoResetSended']!;
+
+  String get infoResetNotSended => _localizedValues[locale.languageCode]!['infoResetNotSended']!;
+
+  String get enterEmail => _localizedValues[locale.languageCode]!['enterEmail']!;
+
+  String get enterPassword => _localizedValues[locale.languageCode]!['enterPassword']!;
+
+  String get loginError => _localizedValues[locale.languageCode]!['loginError']!;
+
+  String get tryAgain => _localizedValues[locale.languageCode]!['tryAgain']!;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -82,6 +136,30 @@ class AppLocalizations {
       'reserveMessage' : "Seat reserved successfully",
       'failedMessage' : 'Seat reservation failed',
       'profile': 'Profile',
+      'welcome': 'Welcome to',
+      'email': 'Email',
+      'password': 'Password',
+      'login': 'Login',
+      'username': 'Username',
+      'fullName': 'Full Name',
+      'confirmPassword': 'Confirm Password',
+      'createAccount': 'Create Account',
+      'backToLogin': 'Back to Login Page',
+      'passwordValidation': 'Password must be at least 6 characters',
+      'confirmPasswordValidation': 'Passwords do not match',
+      'emailValidation': 'Email must contain @',
+      'usernameValidation': 'Username must be within 20 characters.',
+      'fullNameValidation': 'Full Name must be within 20 characters and contain a space',
+      'passwordValidationRequest': "Please confirm your password. ",
+      'forgotPassword': 'Forgot Password',
+      'sendResetMail': 'Send Reset Mail',
+      'infoResetSended': 'Password reset email sent.',
+      'infoResetNotSended': 'Error occurred while sending password reset email.',
+      'enterEmail': 'Enter your email',
+      'enterPassword': 'Enter your password',
+      'loginError': 'Login Error',
+      'tryAgain': 'Try Again',
+
 
     },
     'tr': {
@@ -109,6 +187,33 @@ class AppLocalizations {
       'reserveMessage' : "Koltuk başarıyla rezerve edildi",
       'failedMessage' : 'Koltuk rezervasyonu başarısız oldu',
       'profile': 'Profil',
+      'welcome': 'Hoşgeldiniz',
+      'email': 'Email',
+      'password': 'Şifre',
+      'login': 'Giriş',
+      'username': 'Kullanıcı Adı',
+      'fullName': 'Ad Soyad',
+      'confirmPassword': 'Şifreyi Onayla',
+      'createAccount': 'Hesap Oluştur',
+      'backToLogin': 'Giriş Sayfasına Geri Dön',
+      'passwordValidation': 'Şifre en az 6 karakter olmalıdır',
+      'confirmPasswordValidation': 'Şifreler eşleşmiyor',
+      'emailValidation': 'Email "@" içermelidir',
+      'usernameValidation': 'Kullanıcı adı en fazla 20 karakter olmalıdır.',
+      'fullNameValidation': 'Ad Soyad en fazla 20 karakter olmalı ve bir boşluk içermelidir',
+      'passwordValidationRequest': "Lütfen şifrenizi onaylayın.",
+      'createAccount': 'Hesap Oluştur',
+      'login': 'Giriş',
+      'forgotPassword': 'Şifremi Unuttum',
+      'sendResetMail': 'Şifre Sıfırlama Maili Gönder',
+      'infoResetSended': 'Şifre sıfırlama maili gönderildi.',
+      'infoResetNotSended': 'Şifre sıfırlama maili gönderilirken hata oluştu.',
+      'enterEmail': 'Emailinizi girin',
+      'enterPassword': 'Şifrenizi girin',
+      'loginError': 'Giriş Hatası',
+      'tryAgain': 'Tekrar Deneyin',
+
+
     },
   };
 

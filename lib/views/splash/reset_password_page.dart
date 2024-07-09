@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reset Password'),
+        title: Text(AppLocalizations.of(context)!.welcome),
       ),
       body: Form(
         key: _formKey,
@@ -26,10 +27,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               TextFormField(
                 controller: _emailController,
                 style: TextStyle(color: Colors.black),
-                decoration: customInputDecoration("Email"),
+                decoration: customInputDecoration(AppLocalizations.of(context)!.email),
                 validator: (value) {
                   if (value == null || value.isEmpty || !value.contains('@')) {
-                    return 'Please enter a valid email.';
+                    return AppLocalizations.of(context)!.emailValidation;
                   }
                   return null;
                 },
@@ -45,7 +46,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   minimumSize: Size(150, 50), // Minimum size
                 ),
                 child: Text(
-                  'Send Reset Mail',
+                  AppLocalizations.of(context)!.sendResetMail,
                   style: TextStyle(
                     color: Colors.pinkAccent, // Ensure text color is pinkAccent
                   ),
@@ -65,11 +66,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       try {
         await _firebaseAuth.sendPasswordResetEmail(email: _emailController.text);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password reset email sent.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.infoResetSended)),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error occurred while sending password reset email.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.infoResetNotSended)),
         );
       }
     }
