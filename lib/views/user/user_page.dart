@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/user/user_events.dart';
 import 'package:seat_ease/views/user/user_profile.dart';
 import 'package:seat_ease/views/user/user_event_talk.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
+
 
 
 

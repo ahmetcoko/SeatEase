@@ -8,6 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../config/firebase_api.dart';
 
 
+
 class UserEventsPage extends StatefulWidget {
   @override
   _UserEventsPageState createState() => _UserEventsPageState();
@@ -22,6 +23,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
   String currUserName = '';
   bool isDataLoaded = false;  // Flag to check if data is loaded
   bool showContent = false; // Added flag to control visibility of content
+  bool isLoadingCards = false; // Added flag to control visibility of loading cards
 
   /// TODO: BAK
   /*@override
@@ -35,9 +37,9 @@ class _UserEventsPageState extends State<UserEventsPage> {
     super.initState();
     _initPage();
 
-     // Request notification permission on page load
+    // Request notification permission on page load
     // Add a timer to delay the display of content
-    Timer(Duration(milliseconds: 500), () {
+    Timer(Duration(milliseconds: 2000), () { //timer artırdım
       if (mounted) {
         setState(() {
           showContent = true;
@@ -50,19 +52,21 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
 
 
+
+
   Future<void> _initUserName() async {
     String name = await _fetchUserFullName();
-    currUserName = name;  // Update the username without setting state immediately
+    setState(() {
+      currUserName = name;  // Set state here to rebuild UI with the username once it's fetched
+    });
   }
 
   Future<void> _initPage() async {
     await _initUserName();
-    await _retrieveEvents();
-    if (mounted) {
-      setState(() {
-        isDataLoaded = true;  // Set the data loaded flag to true after all data is fetched
-      });
-    }
+    await _retrieveEvents();  // Ensure all data is loaded before setting the state
+    setState(() {
+      isDataLoaded = true;  // Set the data loaded flag to true after all data is fetched
+    });
   }
 
 
@@ -80,7 +84,9 @@ class _UserEventsPageState extends State<UserEventsPage> {
         tempEvents[dateKey]?.add(data);
       }
     }
-    _events = tempEvents;
+    setState(() {
+      _events = tempEvents; // Set state here to rebuild UI with the events once they're fetched
+    });
   }
 
 
@@ -107,6 +113,16 @@ class _UserEventsPageState extends State<UserEventsPage> {
   void toggleCalendarVisibility() {
     setState(() {
       isCalendarVisible = !isCalendarVisible;
+      if (isCalendarVisible) {
+        isLoadingCards = true; // Set loading to true when calendar is toggled
+        Future.delayed(Duration(milliseconds: 500), () { // Adjust duration to match your calendar animation time
+          if (mounted) {
+            setState(() {
+              isLoadingCards = false; // Set loading to false after the delay
+            });
+          }
+        });
+      }
     });
   }
 
@@ -189,8 +205,9 @@ class _UserEventsPageState extends State<UserEventsPage> {
               child: FutureBuilder<String>(
                 future: _fetchUserFullName(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                  // Display loading indicator until user's name is fetched
+                  if (snapshot.connectionState == ConnectionState.waiting || isLoadingCards) { //son eklenen isLoadingCards
+                    return Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError || snapshot.data == "Unknown User") {
                     return Center(child: Text("Failed to fetch user data or user not found"));
@@ -205,10 +222,11 @@ class _UserEventsPageState extends State<UserEventsPage> {
                         .orderBy('time')
                         .snapshots(),
                     builder: (context, eventSnapshot) {
+                      // Display loading indicator until event data is streamed
                       if (eventSnapshot.hasError) {
                         return Text('Something went wrong');
                       }
-                      if (eventSnapshot.connectionState == ConnectionState.waiting) {
+                      if (eventSnapshot.connectionState == ConnectionState.waiting || isLoadingCards) {
                         return CircularProgressIndicator();
                       }
                       return ListView(
@@ -230,13 +248,10 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                 style: TextStyle(fontWeight: FontWeight.normal),
                               ),
                               trailing: Image.asset(
-                                isPast
-                                    ? 'assets/images/expired.png'  // Show expired image if the event date is past
-                                    : isUserJoined
-                                    ? 'assets/images/res2.png'  // Show reserved image if user is joined
-                                    : isFull
-                                    ? 'assets/images/cross.png'  // Show cross image if event is full
-                                    : 'assets/images/available.png',  // Otherwise, show available image
+                                isPast ? 'assets/images/expired.png'
+                                    : isUserJoined ? 'assets/images/res2.png'
+                                    : isFull ? 'assets/images/cross.png'
+                                    : 'assets/images/available.png',
                                 width: 24,
                               ),
                               children: <Widget>[
@@ -437,6 +452,11 @@ class _UserEventsPageState extends State<UserEventsPage> {
     );
   }
 }
+
+
+
+
+
 
 
 
