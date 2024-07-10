@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -45,6 +46,13 @@ class _EventsMediaPageState extends State<EventsMedia> {
       _commentController.clear();
     }
   }
+
+  Future<double> _calculateAverageScore(List<dynamic> scores) async {
+    if (scores.isEmpty) return 0.0;
+    double total = scores.fold(0, (sum, item) => sum + item);
+    return total / scores.length;
+  }
+
 
   Widget _buildCommentsSection(List<dynamic> comments, String eventId, String currentUser) {
     if (comments.isEmpty) {
@@ -108,6 +116,8 @@ class _EventsMediaPageState extends State<EventsMedia> {
                   List<dynamic> comments = data['comments'] ?? [];
                   bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
                   if (!isUserJoined) return Container(); // Skip events the user hasn't joined
+                  List<dynamic> scores = data['scores'] ?? [];
+
                   return Card(
                     child: ExpansionTile(
                       leading: Image.asset('assets/images/event.png', width: 40),
@@ -126,6 +136,29 @@ class _EventsMediaPageState extends State<EventsMedia> {
                         ),
                         _buildCommentsSection(comments, document.id, currentUserName),
                         Divider(),
+                        FutureBuilder<double>(
+                          future: _calculateAverageScore(scores),
+                          builder: (context, scoreSnapshot) {
+                            if (scoreSnapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            double avgScore = scoreSnapshot.data ?? 0.0;
+                            return RatingBar.builder(
+                              initialRating: avgScore,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: true,
+                              itemCount: 10,
+                              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => Icon(Icons.star, color: Colors.amber),
+                              onRatingUpdate: (rating) {
+                                FirebaseFirestore.instance.collection('Events').doc(document.id).update({
+                                  'scores': FieldValue.arrayUnion([rating])
+                                });
+                              },
+                            );
+                          },
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -157,6 +190,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
       ),
     );
   }
+
 }
 
 
