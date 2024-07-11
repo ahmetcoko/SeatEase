@@ -325,7 +325,8 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
   void _showReservationDialog(String seatId, String documentId, List<dynamic> participants) {
     // Check if the current user has already reserved a seat
-    bool hasReserved = participants.any((participant) => participant['name'] == 'Ahmet Coko');
+    String currentUserName = currUserName;
+    bool hasReserved = participants.any((participant) => participant['name'] == currentUserName);
 
     if (hasReserved) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -361,9 +362,12 @@ class _UserEventsPageState extends State<UserEventsPage> {
   }
 
   void _reserveSeat(String seatId, String documentId) {
+
+    var userName =  currUserName;
+
     FirebaseFirestore.instance.collection('Events').doc(documentId).update({
       'participants': FieldValue.arrayUnion([
-        {'name': 'Ahmet Coko', 'seat': seatId}
+        {'name': userName, 'seat': seatId}
       ])
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
