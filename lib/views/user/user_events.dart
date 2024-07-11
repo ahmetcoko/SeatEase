@@ -39,7 +39,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
     // Request notification permission on page load
     // Add a timer to delay the display of content
-    Timer(Duration(milliseconds: 2000), () { //timer artırdım
+    Timer(Duration(milliseconds: 1000), () { //timer artırdım
       if (mounted) {
         setState(() {
           showContent = true;
@@ -235,6 +235,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                           bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
                           bool isFull = data['participants'].length >= data['capacity'];
                           bool isPast = data['time'].toDate().isBefore(DateTime.now());
+                          DateTime eventDate = (data['time'] as Timestamp).toDate();
 
                           return Card(
                             child: ExpansionTile(
@@ -278,7 +279,8 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                       data['row'],
                                       data['column'],
                                       data['participants'],
-                                      document.id
+                                      document.id,
+                                      eventDate
                                   ),
                                 ),
                                 Divider(),
@@ -323,16 +325,23 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
 
 
-  void _showReservationDialog(String seatId, String documentId, List<dynamic> participants) {
+  void _showReservationDialog(String seatId, String documentId, List<dynamic> participants, DateTime eventDate) {
+    // Check if the event is in the past
+    if (eventDate.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("This event has already taken place and cannot be reserved."))
+      );
+      return; // Exit as the event is expired
+    }
+
     // Check if the current user has already reserved a seat
-    String currentUserName = currUserName;
-    bool hasReserved = participants.any((participant) => participant['name'] == currentUserName);
+    bool hasReserved = participants.any((participant) => participant['name'] == currUserName);
 
     if (hasReserved) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.reservationDialog))
+          SnackBar(content: Text("You have already reserved a seat for this event."))
       );
-      return;  // Exit if the user has already reserved a seat
+      return; // Exit if the user has already reserved a seat
     }
 
     showDialog(
@@ -340,7 +349,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.confirmSeat),
-          content: Text("${AppLocalizations.of(context)!.approval} $seatId?"),
+          content: Text("Would you like to reserve seat $seatId for this event?"),
           actions: <Widget>[
             TextButton(
               child: Text(AppLocalizations.of(context)!.cancel),
@@ -351,7 +360,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
             TextButton(
               child: Text(AppLocalizations.of(context)!.confirm),
               onPressed: () {
-                _reserveSeat(seatId, documentId);
+                _reserveSeat(seatId, documentId, eventDate); // Pass the event date to the reserve function
                 Navigator.of(context).pop();
               },
             ),
@@ -361,24 +370,27 @@ class _UserEventsPageState extends State<UserEventsPage> {
     );
   }
 
-  void _reserveSeat(String seatId, String documentId) {
+  void _reserveSeat(String seatId, String documentId, DateTime eventDate) {
+    // Prevent reservation if the event is in the past
+    if (eventDate.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("This event has already taken place and cannot be reserved."))
+      );
+      return;
+    }
 
-    var userName =  currUserName;
-
+    // Proceed with reserving the seat
     FirebaseFirestore.instance.collection('Events').doc(documentId).update({
       'participants': FieldValue.arrayUnion([
-        {'name': userName, 'seat': seatId}
+        {'name': currUserName, 'seat': seatId}
       ])
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("${AppLocalizations.of(context)!.reserveMessage} $seatId"))
+          SnackBar(content: Text("Your seat $seatId has been reserved."))
       );
-
-      // Check and notify if the event is full
-      FirebaseApi.checkEventCapacityAndUpdate(documentId);
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("${AppLocalizations.of(context)!.failedMessage} $error"))
+          SnackBar(content: Text("Failed to reserve seat: $error"))
       );
     });
   }
@@ -386,7 +398,8 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
 
 
-  Widget _buildSeatGrid(int rows, int columns, List<dynamic> participants, String documentId) {
+
+  Widget _buildSeatGrid(int rows, int columns, List<dynamic> participants, String documentId, DateTime eventDate) {
     // Create a set of occupied seats for quick lookup
     Set<String> occupiedSeats = participants.map<String>((participant) {
       return participant['seat'] as String;  // Make sure 'seat' is a string and corresponds to your seat naming convention
@@ -407,16 +420,18 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
         // Determine if the seat is occupied
         bool isOccupied = occupiedSeats.contains(seatId);
-        return _buildSeat(row, col, isOccupied, documentId, seatId, participants);
+        // Now pass eventDate to the _buildSeat
+        return _buildSeat(row, col, isOccupied, documentId, seatId, participants, eventDate);
       },
     );
   }
 
-  Widget _buildSeat(int row, int col, bool isOccupied, String documentId, String seatId, List<dynamic> participants) {
+
+  Widget _buildSeat(int row, int col, bool isOccupied, String documentId, String seatId, List<dynamic> participants, DateTime eventDate) {
     return InkWell(
       onTap: () {
         if (!isOccupied) {
-          _showReservationDialog(seatId, documentId, participants);
+          _showReservationDialog(seatId, documentId, participants, eventDate);
         }
       },
       child: Container(
@@ -430,6 +445,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ),
     );
   }
+
 
 
 
