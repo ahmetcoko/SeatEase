@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 
 
+
 class EventsMedia extends StatefulWidget {
   @override
   _EventsMediaPageState createState() => _EventsMediaPageState();
@@ -38,21 +39,11 @@ class _EventsMediaPageState extends State<EventsMedia> {
     return "Unknown User";
   }
 
-  Future<void> _postComment(String eventId, String comment, String userName) async {
-    if (comment.isNotEmpty) {
-      await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
-        'comments': FieldValue.arrayUnion([{'name': userName, 'comment': comment}])
-      });
-      _commentController.clear();
-    }
+  Future<double> _calculateAverageScore(Map<String, dynamic> ratings) async {
+    if (ratings.isEmpty) return 0.0;
+    double total = ratings.values.fold(0.0, (sum, item) => sum + item);
+    return total / ratings.length;
   }
-
-  Future<double> _calculateAverageScore(List<dynamic> scores) async {
-    if (scores.isEmpty) return 0.0;
-    double total = scores.fold(0, (sum, item) => sum + item);
-    return total / scores.length;
-  }
-
 
   Widget _buildCommentsSection(List<dynamic> comments, String eventId, String currentUser) {
     if (comments.isEmpty) {
@@ -62,9 +53,9 @@ class _EventsMediaPageState extends State<EventsMedia> {
       );
     }
     return ListView(
-      physics: NeverScrollableScrollPhysics(), // to disable scrolling in nested list
+      physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      children: comments.map((comment) {
+      children: comments.map<Widget>((comment) {
         return ListTile(
           title: Text(comment['name']),
           subtitle: Text(comment['comment']),
@@ -83,12 +74,21 @@ class _EventsMediaPageState extends State<EventsMedia> {
     });
   }
 
+  Future<void> _postComment(String eventId, String comment, String userName) async {
+    if (comment.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
+        'comments': FieldValue.arrayUnion([{'name': userName, 'comment': comment}])
+      });
+      _commentController.clear();
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.eventTalk),
+        title: Text("Event Talk"),
         centerTitle: true,
       ),
       body: FutureBuilder<String>(
@@ -102,9 +102,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
           }
           String currentUserName = snapshot.data!;
           return StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('Events')
-                .where('time', isLessThan: Timestamp.fromDate(DateTime.now()))
-                .snapshots(),
+            stream: FirebaseFirestore.instance.collection('Events').where('time', isLessThan: Timestamp.fromDate(DateTime.now())).snapshots(),
             builder: (context, eventSnapshot) {
               if (eventSnapshot.hasError) return Text('Something went wrong');
               if (eventSnapshot.connectionState == ConnectionState.waiting) {
@@ -114,48 +112,48 @@ class _EventsMediaPageState extends State<EventsMedia> {
                 children: eventSnapshot.data!.docs.map((DocumentSnapshot document) {
                   Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                   List<dynamic> comments = data['comments'] ?? [];
-                  bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
-                  if (!isUserJoined) return Container(); // Skip events the user hasn't joined
-                  List<dynamic> scores = data['scores'] ?? [];
+                  Map<String, dynamic> ratings = data['ratings']?.cast<String, dynamic>() ?? {};
+                  bool hasRated = ratings.containsKey(currentUserName);
+                  double avgScore = hasRated ? ratings[currentUserName] : 0.0;
 
                   return Card(
                     child: ExpansionTile(
                       leading: Image.asset('assets/images/event.png', width: 40),
                       title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text("${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
+                      subtitle: Text("Date: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
                           child: Center(
-                            child: Text(AppLocalizations.of(context)!.description, style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(data['description'] ?? 'No description provided', style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(data['description'] ?? 'No description provided'),
                         ),
                         _buildCommentsSection(comments, document.id, currentUserName),
                         Divider(),
-                        FutureBuilder<double>(
-                          future: _calculateAverageScore(scores),
-                          builder: (context, scoreSnapshot) {
-                            if (scoreSnapshot.connectionState == ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            double avgScore = scoreSnapshot.data ?? 0.0;
-                            return RatingBar.builder(
-                              initialRating: avgScore,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 10,
-                              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => Icon(Icons.star, color: Colors.amber),
-                              onRatingUpdate: (rating) {
-                                FirebaseFirestore.instance.collection('Events').doc(document.id).update({
-                                  'scores': FieldValue.arrayUnion([rating])
-                                });
-                              },
+                        StatefulBuilder(
+                          builder: (BuildContext context, StateSetter setState) {
+                            return Column(
+                              children: [
+                                Text('Average Rating: ${avgScore.toStringAsFixed(1)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                if (!hasRated)
+                                  RatingBar.builder(
+                                    initialRating: avgScore,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    itemBuilder: (context, _) => Icon(Icons.star, color: Colors.amber),
+                                    onRatingUpdate: (rating) {
+                                      setState(() {
+                                        ratings[currentUserName] = rating;
+                                        FirebaseFirestore.instance.collection('Events').doc(document.id).update({
+                                          'ratings': ratings
+                                        });
+                                      });
+                                    },
+                                  ),
+                              ],
                             );
                           },
                         ),
@@ -167,7 +165,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
                                 child: TextField(
                                   controller: _commentController,
                                   decoration: InputDecoration(
-                                    labelText: AppLocalizations.of(context)!.addComment,
+                                    labelText: "Add Comment",
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
@@ -190,8 +188,9 @@ class _EventsMediaPageState extends State<EventsMedia> {
       ),
     );
   }
-
 }
+
+
 
 
 
