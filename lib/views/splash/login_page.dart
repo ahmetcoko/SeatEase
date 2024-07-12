@@ -5,25 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:seat_ease/views/splash/reset_password_page.dart';
 import 'package:seat_ease/utils/customColors.dart';
-import 'package:seat_ease/utils/customTextStyle.dart';
 import 'package:seat_ease/utils/custom_text_button.dart';
-import 'package:seat_ease/views/user/user_events.dart';
 import 'package:seat_ease/views/user/user_page.dart';
 import '../admin/admin_page.dart';
 
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:seat_ease/l10n/app_localizations.dart';
-import 'package:seat_ease/views/splash/reset_password_page.dart';
-import 'package:seat_ease/utils/customColors.dart';
-import 'package:seat_ease/utils/customTextStyle.dart';
-import 'package:seat_ease/utils/custom_text_button.dart';
-import 'package:seat_ease/views/user/user_events.dart';
-import 'package:seat_ease/views/user/user_page.dart';
-import '../admin/admin_page.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -37,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   late String email, password;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
+  Map<DateTime, List<dynamic>>? events; // Variable to store fetched events
 
   @override
   Widget build(BuildContext context) {
@@ -175,13 +161,18 @@ class _LoginPageState extends State<LoginPage> {
           DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(result.user!.uid).get();
           Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
           FirebaseMessaging.instance.subscribeToTopic('allUsers');
+          events = await _retrieveEvents();
           if (userDoc.exists && userData['usertype'] == 'admin') {
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => AdminPage()),
                     (route) => false);
           } else {
+            // Passing events to UserPage via Navigator arguments
             Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => UserPage()),
+                MaterialPageRoute(
+                  builder: (context) => UserPage(),
+                  settings: RouteSettings(arguments: events),  // Pass events here
+                ),
                     (route) => false);
           }
         }
@@ -207,6 +198,22 @@ class _LoginPageState extends State<LoginPage> {
             });
       }
     }
+  }
+
+  Future<Map<DateTime, List<dynamic>>> _retrieveEvents() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Events').get();
+    Map<DateTime, List<dynamic>> tempEvents = {};
+    for (var doc in snapshot.docs) {
+      var data = doc.data();  // Get the data from the document
+      if (data is Map<String, dynamic>) {  // Ensure data is correctly cast to Map<String, dynamic>
+        Timestamp timestamp = data['time'] as Timestamp? ?? Timestamp.now();  // Use a fallback if null
+        DateTime date = timestamp.toDate();
+        DateTime dateKey = DateTime(date.year, date.month, date.day);
+        tempEvents[dateKey] = tempEvents[dateKey] ?? [];
+        tempEvents[dateKey]?.add(data);
+      }
+    }
+    return tempEvents;
   }
 
 

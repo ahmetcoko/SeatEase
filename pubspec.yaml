@@ -50,6 +50,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_rating_bar: ^4.0.1
+  flutter_riverpod: ^2.5.1
 
 
 

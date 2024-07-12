@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../config/firebase_api.dart';
 
 
 
 class UserEventsPage extends StatefulWidget {
+
   @override
   _UserEventsPageState createState() => _UserEventsPageState();
 }
@@ -37,9 +37,10 @@ class _UserEventsPageState extends State<UserEventsPage> {
     super.initState();
     _initPage();
 
+
     // Request notification permission on page load
     // Add a timer to delay the display of content
-    Timer(Duration(milliseconds: 1000), () { //timer artırdım
+    Timer(Duration(milliseconds: 600), () { //timer artırdım
       if (mounted) {
         setState(() {
           showContent = true;
@@ -63,31 +64,15 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
   Future<void> _initPage() async {
     await _initUserName();
-    await _retrieveEvents();  // Ensure all data is loaded before setting the state
+    _events = ModalRoute.of(context)!.settings.arguments as Map<DateTime, List<dynamic>>;
+    // Ensure all data is loaded before setting the state
     setState(() {
       isDataLoaded = true;  // Set the data loaded flag to true after all data is fetched
     });
   }
 
 
-  // Retrieve events and organize them by date for the calendar markers
-  Future<void> _retrieveEvents() async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Events').get();
-    Map<DateTime, List<dynamic>> tempEvents = {};
-    for (var doc in snapshot.docs) {
-      var data = doc.data();  // Get the data from the document
-      if (data is Map<String, dynamic>) {  // Ensure data is correctly cast to Map<String, dynamic>
-        Timestamp timestamp = data['time'] as Timestamp? ?? Timestamp.now();  // Use a fallback if null
-        DateTime date = timestamp.toDate();
-        DateTime dateKey = DateTime(date.year, date.month, date.day);
-        tempEvents[dateKey] = tempEvents[dateKey] ?? [];
-        tempEvents[dateKey]?.add(data);
-      }
-    }
-    setState(() {
-      _events = tempEvents; // Set state here to rebuild UI with the events once they're fetched
-    });
-  }
+
 
 
 
@@ -472,6 +457,67 @@ class _UserEventsPageState extends State<UserEventsPage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
