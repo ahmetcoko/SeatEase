@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../utils/app_theme.dart';
+import '../splash/login_page.dart';
 import '../theme_changer.dart';
 
 class AdminSettingsPage extends StatefulWidget {
@@ -25,8 +27,12 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settingsMainTitle),
+        title: Text(AppLocalizations.of(context)!.settingsTitle),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: () => _logout(context),
+        ),
       ),
       body: ListView(
         children: [
@@ -72,5 +78,17 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
         ],
       ),
     );
+  }
+
+  void _logout(BuildContext context) {
+    FirebaseAuth.instance.signOut().then((value) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Logout failed: ${error.toString()}")),
+      );
+    });
   }
 }

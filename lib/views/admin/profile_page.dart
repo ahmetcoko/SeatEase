@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:seat_ease/l10n/app_localizations.dart';
 import '../splash/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +13,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text(AppLocalizations.of(context)!.settingsTitle),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.logout),
@@ -28,9 +29,6 @@ class ProfilePage extends StatelessWidget {
             },
           ),
         ],
-      ),
-      body: Center(
-        child: Text('Profile Page', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
     );
   }

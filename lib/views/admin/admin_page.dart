@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seat_ease/l10n/app_localizations.dart';
+import 'package:seat_ease/views/admin/admin_settings.dart';
 import 'package:seat_ease/views/admin/profile_page.dart';
 import 'package:seat_ease/views/admin/create_event.dart';
 
@@ -18,7 +19,7 @@ class _AdminPageState extends State<AdminPage> {
   final List<Widget> _widgetOptions = [
     EventsPage(),
     CreateEvent(),
-    ProfilePage(),
+    AdminSettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -51,8 +52,8 @@ class _AdminPageState extends State<AdminPage> {
             label: AppLocalizations.of(context)!.createEvent,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: AppLocalizations.of(context)!.profile,
+            icon: Icon(Icons.settings),
+            label: AppLocalizations.of(context)!.settingsTitle,
           ),
         ],
         currentIndex: _selectedIndex,
