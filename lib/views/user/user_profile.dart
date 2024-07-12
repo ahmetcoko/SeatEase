@@ -210,7 +210,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     String currentUserName = snapshot.data!;
                     // Continue with your logic here once the data is available
                     return StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance.collection('Events').orderBy('time').snapshots(),
+                      stream: FirebaseFirestore.instance.collection('Events')
+                          .where('time', isGreaterThanOrEqualTo: DateTime.now())
+                          .orderBy('time')
+                          .snapshots(),
                       builder: (context, eventSnapshot) {
                         if (eventSnapshot.connectionState == ConnectionState.waiting) {
                           return CircularProgressIndicator(); // Ensure this also handles loading gracefully
@@ -223,7 +226,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         var joinedEvents = eventSnapshot.data!.docs.where((DocumentSnapshot document) {
                           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                          return data['participants'].any((participant) => participant['name'] == currentUserName);
+                          bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
+                          bool isPast = data['time'].toDate().isBefore(DateTime.now());
+                          return isUserJoined && !isPast;
                         }).toList();
 
                         if (joinedEvents.isEmpty) {
