@@ -106,6 +106,9 @@ class _UserEventsPageState extends State<UserEventsPage> {
   void toggleCalendarVisibility() {
     setState(() {
       isCalendarVisible = !isCalendarVisible;
+      if (!isCalendarVisible) {
+        selectedDay = null; // Reset the selected day when the calendar is closed
+      }
       if (isCalendarVisible) {
         isLoadingCards = true; // Set loading to true when calendar is toggled
         Future.delayed(Duration(milliseconds: 500), () { // Adjust duration to match your calendar animation time
@@ -208,7 +211,14 @@ class _UserEventsPageState extends State<UserEventsPage> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   labelText: 'Search',
-                  suffixIcon: Icon(Icons.search),
+                  suffixIcon: searchTerm.isEmpty
+                      ? Icon(Icons.search)
+                      : IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  ),
                 ),
               ),
             ),
