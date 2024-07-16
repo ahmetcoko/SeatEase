@@ -24,6 +24,8 @@ class _UserEventsPageState extends State<UserEventsPage> {
   bool isDataLoaded = false;  // Flag to check if data is loaded
   bool showContent = false; // Added flag to control visibility of content
   bool isLoadingCards = false; // Added flag to control visibility of loading cards
+  final TextEditingController _searchController = TextEditingController();
+  String searchTerm = '';
 
   /// TODO: BAK
   /*@override
@@ -36,6 +38,12 @@ class _UserEventsPageState extends State<UserEventsPage> {
   void initState() {
     super.initState();
     _initPage();
+
+    _searchController.addListener(() {
+      setState(() {
+        searchTerm = _searchController.text;
+      });
+    });
 
 
     // Request notification permission on page load
@@ -112,6 +120,14 @@ class _UserEventsPageState extends State<UserEventsPage> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -186,6 +202,16 @@ class _UserEventsPageState extends State<UserEventsPage> {
                   },
                 ),
               ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  suffixIcon: Icon(Icons.search),
+                ),
+              ),
+            ),
             Expanded(
               child: FutureBuilder<String>(
                 future: _fetchUserFullName(),
@@ -221,6 +247,10 @@ class _UserEventsPageState extends State<UserEventsPage> {
                           bool isFull = data['participants'].length >= data['capacity'];
                           bool isPast = data['time'].toDate().isBefore(DateTime.now());
                           DateTime eventDate = (data['time'] as Timestamp).toDate();
+
+                          if (searchTerm.isNotEmpty && !data['description'].toString().contains(searchTerm)) {
+                            return Container(); // Skip this event if it doesn't match the search term
+                          }
 
                           return Card(
                             child: ExpansionTile(
