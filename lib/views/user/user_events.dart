@@ -300,39 +300,6 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                   ),
                                 ),
                                 Divider(),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: _buildSeatGrid(
-                                      data['row'],
-                                      data['column'],
-                                      data['participants'],
-                                      document.id,
-                                      eventDate
-                                  ),
-                                ),
-                                Divider(),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 20,
-                                        height: 20,
-                                        color: Colors.red.shade800,
-                                        margin: EdgeInsets.symmetric(horizontal: 10),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.full),
-                                      Container(
-                                        width: 20,
-                                        height: 20,
-                                        color: Colors.green.shade200,
-                                        margin: EdgeInsets.symmetric(horizontal: 10),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.empty),
-                                    ],
-                                  ),
-                                ),
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.push(
