@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:seat_ease/l10n/app_localizations.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import 'event_detail_page.dart';
+
 
 
 class UserEventsPage extends StatefulWidget {
@@ -330,7 +332,18 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                       Text(AppLocalizations.of(context)!.empty),
                                     ],
                                   ),
-                                )
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EventDetailPage(eventDocument: document),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('Reserve Seat'),
+                                ),
                               ],
                             ),
                           );

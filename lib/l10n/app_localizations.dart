@@ -129,6 +129,12 @@ class AppLocalizations {
 
   String get addComment => _localizedValues[locale.languageCode]!['addComment']!;
 
+  String get capacity => _localizedValues[locale.languageCode]!['capacity']!;
+
+  String get back => _localizedValues[locale.languageCode]!['back']!;
+
+  String get bookSeat => _localizedValues[locale.languageCode]!['bookSeat']!;
+
 
 
 
@@ -212,6 +218,9 @@ class AppLocalizations {
       'eventDeleted': 'Event deleted successfully',
       'eventTalk': 'Event Talk',
       'addComment': 'Add Comment',
+      'capacity': 'Capacity',
+      'back': 'Back',
+      'bookSeat': 'Reservation',
 
 
     },
@@ -282,6 +291,10 @@ class AppLocalizations {
       'eventDeleted': 'Etkinlik başarıyla silindi',
       'eventTalk': 'Yorumlar',
       'addComment': 'Yorum Yap',
+      'capacity': 'Kapasite',
+      'back' : 'Geri',
+      'bookSeat': 'Koltuk Seçimi',
+
 
 
     },
