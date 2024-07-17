@@ -309,7 +309,10 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                       ),
                                     );
                                   },
-                                  child: Text('Reserve Seat'),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.reserveSeat,
+                                    style: TextStyle(color: Colors.pinkAccent), // Apply pinkAccent color to the text
+                                  ),
                                 ),
                               ],
                             ),

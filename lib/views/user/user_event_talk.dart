@@ -41,7 +41,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
 
   Future<double> _calculateAverageScore(Map<String, dynamic> ratings) async {
     if (ratings.isEmpty) return 0.0;
-    double total = ratings.values.fold(0.0, (sum, item) => sum + item);
+    double total = ratings.values.fold(0.0, (sum, item) => sum + (item as num));
     return total / ratings.length;
   }
 
@@ -132,28 +132,40 @@ class _EventsMediaPageState extends State<EventsMedia> {
                         Divider(),
                         StatefulBuilder(
                           builder: (BuildContext context, StateSetter setState) {
-                            return Column(
-                              children: [
-                                Text('Average Rating: ${avgScore.toStringAsFixed(1)}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                if (!hasRated)
-                                  RatingBar.builder(
-                                    initialRating: avgScore,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, _) => Icon(Icons.star, color: Colors.amber),
-                                    onRatingUpdate: (rating) {
-                                      setState(() {
-                                        ratings[currentUserName] = rating;
-                                        FirebaseFirestore.instance.collection('Events').doc(document.id).update({
-                                          'ratings': ratings
-                                        });
-                                      });
-                                    },
-                                  ),
-                              ],
+                            return FutureBuilder<double>(
+                              future: _calculateAverageScore(ratings),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError || !snapshot.hasData) {
+                                  return Text("Failed to calculate average rating");
+                                }
+                                double avgScore = snapshot.data!;
+                                return Column(
+                                  children: [
+                                    Text('Average Rating: ${avgScore.toStringAsFixed(1)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    if (!hasRated)
+                                      RatingBar.builder(
+                                        initialRating: avgScore,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                        itemBuilder: (context, _) => Icon(Icons.star, color: Colors.amber),
+                                        onRatingUpdate: (rating) {
+                                          setState(() {
+                                            ratings[currentUserName] = rating;
+                                            FirebaseFirestore.instance.collection('Events').doc(document.id).update({
+                                              'ratings': ratings
+                                            });
+                                          });
+                                        },
+                                      ),
+                                  ],
+                                );
+                              },
                             );
                           },
                         ),

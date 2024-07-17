@@ -135,6 +135,8 @@ class AppLocalizations {
 
   String get bookSeat => _localizedValues[locale.languageCode]!['bookSeat']!;
 
+  String get reserveSeat => _localizedValues[locale.languageCode]!['reserveSeat']!;
+
 
 
 
@@ -221,6 +223,7 @@ class AppLocalizations {
       'capacity': 'Capacity',
       'back': 'Back',
       'bookSeat': 'Reservation',
+      'reserveSeat': 'Reserve Seat',
 
 
     },
@@ -294,6 +297,7 @@ class AppLocalizations {
       'capacity': 'Kapasite',
       'back' : 'Geri',
       'bookSeat': 'Koltuk Seçimi',
+      'reserveSeat': 'Koltuk Seçimi',
 
 
 
