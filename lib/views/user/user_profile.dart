@@ -196,7 +196,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: profileHeight / 2 + 20), // Added a 20 pixel space for clarity
+              SizedBox(height: profileHeight / 2 + 20),
+              FutureBuilder<String>(
+                future: _fetchUserFullName(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Show loading indicator while waiting
+                  }
+                  if (!snapshot.hasData || snapshot.hasError) {
+                    return Text("Failed to fetch user data or user not found");
+                  }
+                  String currentUserName = snapshot.data!;
+                  return Text(currentUserName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)); // Display the user's fullname
+                },
+              ),// Added a 20 pixel space for clarity
               Expanded(
                 child: FutureBuilder<String>(
                   future: _fetchUserFullName(),
