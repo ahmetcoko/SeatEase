@@ -133,7 +133,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     // Check if the event is in the past
     if (eventDate.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("This event has already taken place and cannot be reserved."))
+          SnackBar(content: Text(AppLocalizations.of(context)!.alreadyTakenPlace))
       );
       return; // Exit as the event is expired
     }
@@ -143,7 +143,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
     if (hasReserved) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("You have already reserved a seat for this event."))
+          SnackBar(content: Text(AppLocalizations.of(context)!.reservationDialog))
       );
       return; // Exit if the user has already reserved a seat
     }
@@ -153,7 +153,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.confirmSeat),
-          content: Text("Would you like to reserve seat $seatId for this event?"),
+          content: Text("${AppLocalizations.of(context)!.approval} ${AppLocalizations.of(context)!.yourSeat} $seatId "),
           actions: <Widget>[
             TextButton(
               child: Text(AppLocalizations.of(context)!.cancel),
@@ -177,7 +177,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
   void _reserveSeat(String seatId, String documentId, DateTime eventDate) {
     if (eventDate.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("This event has already taken place and cannot be reserved."))
+          SnackBar(content: Text(AppLocalizations.of(context)!.alreadyTakenPlace))
       );
       return;
     }
@@ -188,7 +188,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
       ])
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Your seat $seatId has been reserved."))
+          SnackBar(content: Text("${AppLocalizations.of(context)!.reserveMessage} ${AppLocalizations.of(context)!.yourSeat} $seatId "))
       );
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(

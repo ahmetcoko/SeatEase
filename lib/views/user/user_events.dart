@@ -382,7 +382,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
     // Prevent reservation if the event is in the past
     if (eventDate.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("This event has already taken place and cannot be reserved."))
+          SnackBar(content: Text(AppLocalizations.of(context)!.alreadyTakenPlace))
       );
       return;
     }
@@ -394,7 +394,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       ])
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Your seat $seatId has been reserved."))
+          SnackBar(content: Text("${AppLocalizations.of(context)!.reserveMessage} ${AppLocalizations.of(context)!.yourSeat} $seatId "))
       );
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(

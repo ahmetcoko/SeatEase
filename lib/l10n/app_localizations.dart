@@ -141,6 +141,10 @@ class AppLocalizations {
 
   String get search => _localizedValues[locale.languageCode]!['search']!;
 
+  String get alreadyTakenPlace => _localizedValues[locale.languageCode]!['alreadyTakenPlace']!;
+
+  String get yourSeat => _localizedValues[locale.languageCode]!['yourSeat']!;
+
 
 
 
@@ -232,6 +236,8 @@ class AppLocalizations {
       'reserveSeat': 'Reserve Seat',
       'averageRating': 'Average Rating',
       'search': 'Search',
+      'alreadyTakenPlace': 'This event has already taken place and cannot be reserved.',
+      'yourSeat' : 'Your Seat is: ',
 
 
 
@@ -309,6 +315,8 @@ class AppLocalizations {
       'reserveSeat': 'Koltuk Seçimi',
       'averageRating': 'Etkinlik Puanı',
       'search': 'Ara',
+      'alreadyTakenPlace': 'Bu etkinlik zaten gerçekleşti ve rezerve edilemez.',
+      'yourSeat' : 'Koltuğunuz:',
 
 
 
