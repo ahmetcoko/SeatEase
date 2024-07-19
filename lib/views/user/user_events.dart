@@ -212,7 +212,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  labelText: 'Search',
+                  labelText: AppLocalizations.of(context)!.search,
                   suffixIcon: searchTerm.isEmpty
                       ? Icon(Icons.search)
                       : IconButton(

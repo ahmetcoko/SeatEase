@@ -137,6 +137,12 @@ class AppLocalizations {
 
   String get reserveSeat => _localizedValues[locale.languageCode]!['reserveSeat']!;
 
+  String get averageRating => _localizedValues[locale.languageCode]!['averageRating']!;
+
+  String get search => _localizedValues[locale.languageCode]!['search']!;
+
+
+
 
 
 
@@ -224,6 +230,9 @@ class AppLocalizations {
       'back': 'Back',
       'bookSeat': 'Reservation',
       'reserveSeat': 'Reserve Seat',
+      'averageRating': 'Average Rating',
+      'search': 'Search',
+
 
 
     },
@@ -298,6 +307,9 @@ class AppLocalizations {
       'back' : 'Geri',
       'bookSeat': 'Koltuk Seçimi',
       'reserveSeat': 'Koltuk Seçimi',
+      'averageRating': 'Etkinlik Puanı',
+      'search': 'Ara',
+
 
 
 

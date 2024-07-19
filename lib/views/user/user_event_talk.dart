@@ -120,7 +120,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
                     child: ExpansionTile(
                       leading: Image.asset('assets/images/event.png', width: 40),
                       title: Text(data['name'], style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text("Date: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
+                      subtitle: Text("${AppLocalizations.of(context)!.dateTime}: ${DateFormat('yyyy-MM-dd – kk:mm').format(data['time'].toDate())}"),
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -144,7 +144,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
                                 double avgScore = snapshot.data!;
                                 return Column(
                                   children: [
-                                    Text('Average Rating: ${avgScore.toStringAsFixed(1)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('${AppLocalizations.of(context)!.averageRating} ${avgScore.toStringAsFixed(1)}', style: TextStyle(fontWeight: FontWeight.bold)),
                                     if (!hasRated)
                                       RatingBar.builder(
                                         initialRating: avgScore,
@@ -177,7 +177,7 @@ class _EventsMediaPageState extends State<EventsMedia> {
                                 child: TextField(
                                   controller: _commentController,
                                   decoration: InputDecoration(
-                                    labelText: "Add Comment",
+                                    labelText: AppLocalizations.of(context)!.addComment,
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
