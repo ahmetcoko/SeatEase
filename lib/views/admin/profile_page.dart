@@ -6,7 +6,7 @@ import '../splash/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'admin_settings.dart';
-// Make sure this import points to your actual settings page
+
 
 class ProfilePage extends StatelessWidget {
   @override
