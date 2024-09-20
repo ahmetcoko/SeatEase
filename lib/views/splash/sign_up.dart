@@ -18,14 +18,14 @@ class _SignUpState extends State<SignUp> {
   String email = '', fullname = '', username = '', password = '', confirmPassword = '';
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  // Controllers for text fields
+ 
   TextEditingController emailController = TextEditingController();
   TextEditingController fullNameController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
-  // Validation flags
+  
   bool emailValid = false;
   bool fullNameValid = false;
   bool usernameValid = false;
@@ -37,7 +37,7 @@ class _SignUpState extends State<SignUp> {
     var height = MediaQuery.of(context).size.height;
     String topImage = "assets/images/topImage.png";
     return Scaffold(
-      body: SafeArea(  // Ensure content does not overlap with system status or navigation bars
+      body: SafeArea(  
         child: appBody(height, topImage),
       ),
     );
@@ -45,7 +45,7 @@ class _SignUpState extends State<SignUp> {
 
   SingleChildScrollView appBody(double height, String topImage) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: 20), // Add padding to ensure content is above any system UI or watermarks
+      padding: EdgeInsets.only(bottom: 20), 
       child: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,7 @@ class _SignUpState extends State<SignUp> {
                     validationInfo(),
                     customSizedBox(),
                     signUpButton(),
-                    customSizedBox(height: 48), // Increased space before the bottom navigation or watermark
+                    customSizedBox(height: 48), 
                     backToLoginPage(),
                   ],
                 ),
@@ -89,7 +89,7 @@ class _SignUpState extends State<SignUp> {
   Text titleText() {
     return Text(
       "${AppLocalizations.of(context)!.welcome} \n   SeatEase",
-      style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
+      style: Theme.of(context).textTheme.displayLarge,  
     );
   }
 
@@ -100,7 +100,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       controller: emailController,
       validator: emailValidator,
-      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
+      style: TextStyle(color: Colors.black), 
       decoration: customInputDecoration(AppLocalizations.of(context)!.email),
       onSaved: (value) => email = value!,
     );
@@ -110,7 +110,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       controller: fullNameController,
       validator: fullNameValidator,
-      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
+      style: TextStyle(color: Colors.black),
       decoration: customInputDecoration(AppLocalizations.of(context)!.fullName),
       onSaved: (value) => fullname = value!,
     );
@@ -120,7 +120,7 @@ class _SignUpState extends State<SignUp> {
     return TextFormField(
       controller: usernameController,
       validator: usernameValidator,
-      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
+      style: TextStyle(color: Colors.black), 
       decoration: customInputDecoration(AppLocalizations.of(context)!.username),
       onSaved: (value) => username = value!,
     );
@@ -131,7 +131,7 @@ class _SignUpState extends State<SignUp> {
       controller: passwordController,
       validator: passwordValidator,
       obscureText: true,
-      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
+      style: TextStyle(color: Colors.black), 
       decoration: customInputDecoration(AppLocalizations.of(context)!.password),
       onSaved: (value) => password = value!,
     );
@@ -142,7 +142,7 @@ class _SignUpState extends State<SignUp> {
       controller: confirmPasswordController,
       validator: (value) => confirmPasswordValidator(value, passwordController.text),
       obscureText: true,
-      style: TextStyle(color: Colors.black), // Ensure text color is black for visibility
+      style: TextStyle(color: Colors.black), 
       decoration: customInputDecoration(AppLocalizations.of(context)!.confirmPassword),
       onSaved: (value) => confirmPassword = value!,
     );
@@ -164,7 +164,7 @@ class _SignUpState extends State<SignUp> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded( // Wrap the text with Expanded
+        Expanded( 
           child: Text(text, style: TextStyle(color: Colors.grey[600])),
         ),
         Icon(isValid ? Icons.check : Icons.close, color: isValid ? Colors.green : Colors.red),
@@ -193,7 +193,7 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  // Validators
+ 
   String? emailValidator(String? value) {
     if (value!.isEmpty || !value.contains("@")) {
       return AppLocalizations.of(context)!.emailValidation;
@@ -238,7 +238,7 @@ class _SignUpState extends State<SignUp> {
       child: ElevatedButton(
         onPressed: signUp,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor, // Use secondary color from theme
+          backgroundColor: Theme.of(context).primaryColor, 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
@@ -247,7 +247,7 @@ class _SignUpState extends State<SignUp> {
         child: Text(
           AppLocalizations.of(context)!.createAccount,
           style: TextStyle(
-            color: Colors.pinkAccent, // Ensuring text is visible against the button color
+            color: Colors.pinkAccent, 
           ),
         ),
       ),
@@ -259,19 +259,19 @@ class _SignUpState extends State<SignUp> {
     if (formkey.currentState!.validate()) {
       formkey.currentState!.save();
       try {
-        // Create user with email and password
+        
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
 
-        // Save additional details in Firestore under the 'Users' collection
+        
         FirebaseFirestore.instance.collection('Users').doc(userCredential.user!.uid).set({
           'fullname': fullname,
           'username': username,
           'email': email,
           'usertype': 'normalUser',
-          // Any other user details you might want to save
+          
         }).then((value) {
           print("User Added to Firestore");
           Navigator.of(context).pushAndRemoveUntil(
@@ -308,7 +308,7 @@ class _SignUpState extends State<SignUp> {
   InputDecoration customInputDecoration(String hintText) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey),  // Hint text color
+      hintStyle: TextStyle(color: Colors.grey),  
       enabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: Colors.grey),
       ),
