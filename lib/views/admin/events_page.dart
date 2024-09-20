@@ -122,10 +122,10 @@ class _EventsPageState extends State<EventsPage> {
       if (participant is Map<String, dynamic>) {
         return Text("${participant['name']} - ${AppLocalizations.of(context)!.seat} ${participant['seat']}");
       } else if (participant is String) {
-        // Handle the case where a participant is a String
+       
         return Text(participant);
       } else {
-        // Handle the case where a participant is neither a Map nor a String
+        
         return Text('Unknown participant type');
       }
     }).toList();
@@ -144,7 +144,7 @@ class _EventsPageState extends State<EventsPage> {
     );
 
     if (pickedDate != null && pickedTime != null) {
-      // Combine the date and time into one DateTime object
+      
       DateTime eventDateTime = DateTime(
         pickedDate.year,
         pickedDate.month,
@@ -153,7 +153,7 @@ class _EventsPageState extends State<EventsPage> {
         pickedTime.minute,
       );
 
-      // Update the event in Firestore
+     
       await FirebaseFirestore.instance.collection('Events').doc(eventId).update({
         'time': eventDateTime,
       });
@@ -166,7 +166,7 @@ class _EventsPageState extends State<EventsPage> {
 
   void _deleteEvent(String eventId) async {
     try {
-      // Call the cloud function to delete the event and send a notification
+   
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deleteEvent');
       final response = await callable.call(<String, dynamic>{
         'eventId': eventId,
