@@ -15,7 +15,7 @@ class AdminPage extends StatefulWidget {
 class _AdminPageState extends State<AdminPage> {
   int _selectedIndex = 0;
 
-  // Define the list of pages as an instance variable instead
+
   final List<Widget> _widgetOptions = [
     EventsPage(),
     CreateEvent(),
@@ -32,7 +32,7 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: Duration(milliseconds: 300),  // Duration of the transition
+        duration: Duration(milliseconds: 300), 
         transitionBuilder: (Widget child, Animation<double> animation) {
           return FadeTransition(
             opacity: animation,
@@ -44,7 +44,7 @@ class _AdminPageState extends State<AdminPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.event), // Adjust the size as needed
+            icon: Icon(Icons.event), 
             label: AppLocalizations.of(context)!.userEventsTitle,
           ),
           BottomNavigationBarItem(
