@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   late String email, password;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
-  Map<DateTime, List<dynamic>>? events; // Variable to store fetched events
+  Map<DateTime, List<dynamic>>? events; 
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
   Text titleText() {
     return Text(
       "${AppLocalizations.of(context)!.welcome} \n   SeatEase",
-      style: Theme.of(context).textTheme.displayLarge,  // Using the theme's headline1 style
+      style: Theme.of(context).textTheme.displayLarge, 
     );
   }
 
@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
       onSaved: (value) {
         email = value!;
       },
-      style: TextStyle(color: Colors.black), // Ensuring text color is black for visibility
+      style: TextStyle(color: Colors.black), 
       decoration: customInputDecoration(AppLocalizations.of(context)!.email),
     );
   }
@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
         password = value!;
       },
       obscureText: true,
-      style: TextStyle(color: Colors.black), // Ensuring text color is black for visibility
+      style: TextStyle(color: Colors.black),
       decoration: customInputDecoration(AppLocalizations.of(context)!.password),
     );
   }
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
       child: ElevatedButton(
         onPressed: signIn,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor, // Using the primary color from the theme
+          backgroundColor: Theme.of(context).primaryColor, 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Text(
           AppLocalizations.of(context)!.login,
           style: TextStyle(
-            color: Colors.pinkAccent, // Assuming you want white text for better contrast
+            color: Colors.pinkAccent, 
           ),
         ),
       ),
@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
         UserCredential result = await firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
         if (result.user != null) {
-          // Fetch user type from Firestore and cast the data
+         
           DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(result.user!.uid).get();
           Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
           FirebaseMessaging.instance.subscribeToTopic('allUsers');
@@ -167,11 +167,11 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialPageRoute(builder: (context) => AdminPage()),
                     (route) => false);
           } else {
-            // Passing events to UserPage via Navigator arguments
+           
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (context) => UserPage(),
-                  settings: RouteSettings(arguments: events),  // Pass events here
+                  settings: RouteSettings(arguments: events),  
                 ),
                     (route) => false);
           }
@@ -204,9 +204,9 @@ class _LoginPageState extends State<LoginPage> {
     QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Events').get();
     Map<DateTime, List<dynamic>> tempEvents = {};
     for (var doc in snapshot.docs) {
-      var data = doc.data();  // Get the data from the document
-      if (data is Map<String, dynamic>) {  // Ensure data is correctly cast to Map<String, dynamic>
-        Timestamp timestamp = data['time'] as Timestamp? ?? Timestamp.now();  // Use a fallback if null
+      var data = doc.data();  
+      if (data is Map<String, dynamic>) {  
+        Timestamp timestamp = data['time'] as Timestamp? ?? Timestamp.now();  
         DateTime date = timestamp.toDate();
         DateTime dateKey = DateTime(date.year, date.month, date.day);
         tempEvents[dateKey] = tempEvents[dateKey] ?? [];
