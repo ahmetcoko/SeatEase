@@ -36,9 +36,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
       if (pickedFile != null) {
         File tempImage = File(pickedFile.path);
         setState(() {
-          _image = tempImage; // Temporarily display selected image
+          _image = tempImage; 
         });
-        await _uploadProfilePicture(tempImage); // Ensure upload completes before setting state
+        await _uploadProfilePicture(tempImage); 
       } else {
         print("No image selected");
       }
@@ -56,7 +56,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     try {
       UploadTask uploadTask = ref.putFile(image);
-      // Listen to the upload task for progress reporting
       uploadTask.snapshotEvents.listen(
               (TaskSnapshot snapshot) {
             print("Task state: ${snapshot.state}, bytes uploaded: ${snapshot.bytesTransferred} / ${snapshot.totalBytes}");
@@ -74,7 +73,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               });
               if (mounted) {
                 setState(() {
-                  _profileImageUrl = downloadURL; // Update displayed image only if the widget is mounted
+                  _profileImageUrl = downloadURL; 
                 });
               }
             } catch (e) {
@@ -92,7 +91,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
 
   Future<void> _loadProfilePicture() async {
-    String userId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Safe access with null check and fallback
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? ''; 
     if (userId.isEmpty) {
       print("No user ID available");
       return;
@@ -102,7 +101,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data()! as Map<String, dynamic>;
-        if (userData.containsKey('profilePicture') && mounted) { // Check if the widget is still mounted
+        if (userData.containsKey('profilePicture') && mounted) { 
           setState(() {
             _profileImageUrl = userData['profilePicture'] as String;
           });
@@ -118,9 +117,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget buildCoverImage() => Container(
     color: Colors.grey,
     child: Image.asset(
-      'assets/images/devent.jpg', // Path to the image in your assets directory
+      'assets/images/devent.jpg', 
       width: double.infinity,
-      height: coverHeight, // Arbitrary height for cover image
+      height: coverHeight, 
       fit: BoxFit.cover,
     ),
   );
@@ -161,7 +160,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     double coverHeight = 280;
     double profileHeight = 144;
     double top = coverHeight - profileHeight / 2;
-    double bottomListTop = top + profileHeight / 2 + 20; // Added a 20 pixel space for clarity
+    double bottomListTop = top + profileHeight / 2 + 20; 
 
     return Scaffold(
       appBar: AppBar(
@@ -201,27 +200,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 future: _fetchUserFullName(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(); // Show loading indicator while waiting
+                    return CircularProgressIndicator(); 
                   }
                   if (!snapshot.hasData || snapshot.hasError) {
                     return Text("Failed to fetch user data or user not found");
                   }
                   String currentUserName = snapshot.data!;
-                  return Text(currentUserName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)); // Display the user's fullname
+                  return Text(currentUserName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)); 
                 },
-              ),// Added a 20 pixel space for clarity
+              ),
               Expanded(
                 child: FutureBuilder<String>(
                   future: _fetchUserFullName(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator()); // Show loading indicator while waiting
+                      return Center(child: CircularProgressIndicator()); 
                     }
                     if (snapshot.hasError || !snapshot.hasData) {
                       return Center(child: Text("Failed to fetch user data or user not found"));
                     }
                     String currentUserName = snapshot.data!;
-                    // Continue with your logic here once the data is available
+                   
                     return StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance.collection('Events')
                           .where('time', isGreaterThanOrEqualTo: DateTime.now())
@@ -229,7 +228,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           .snapshots(),
                       builder: (context, eventSnapshot) {
                         if (eventSnapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator(); // Ensure this also handles loading gracefully
+                          return CircularProgressIndicator(); 
                         }
                         if (eventSnapshot.hasError) {
                           return Text('Something went wrong');
@@ -251,9 +250,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: eventSnapshot.data!.docs.map((DocumentSnapshot document) {
                             Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                             bool isUserJoined = data['participants'].any((participant) => participant['name'] == currentUserName);
-                            if (!isUserJoined) return Container(); // Skip events the user hasn't joined
+                            if (!isUserJoined) return Container(); 
 
-                            // Extract user's seat for the cancellation function
+                            
                             String userSeat = data['participants'].firstWhere((p) => p['name'] == currentUserName, orElse: () => {'seat': null})['seat'];
 
                             return Card(
@@ -333,7 +332,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       ])
     }).then((_) {
       print("Reservation canceled successfully.");
-      setState(() {}); // Refresh the UI to reflect the removal
+      setState(() {});
     }).catchError((error) {
       print("Failed to cancel reservation: $error");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to cancel reservation: $error")));
