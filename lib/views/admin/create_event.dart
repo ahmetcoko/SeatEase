@@ -26,7 +26,7 @@ class _CreateEventState extends State<CreateEvent> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.createEvent),
-        centerTitle: true,  // This will center the title text within the AppBar
+        centerTitle: true,  
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -164,7 +164,7 @@ class _CreateEventState extends State<CreateEvent> {
           _selectedTime!.minute,
         );
 
-        // Example participants added during event creation for demonstration
+      
         List<Map<String, dynamic>> participants = [];
 
         FirebaseFirestore.instance.collection('Events').add({
