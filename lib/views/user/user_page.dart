@@ -16,9 +16,9 @@ class _UserPageState extends State<UserPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _widgetOptions = [
-    UserEventsPage(), // Assumes you have an EventsPage widget
-    EventsMedia(), // Assumes you have a SettingsPage widget
-    UserProfilePage(), // Assumes you have a ProfilePage widget
+    UserEventsPage(), 
+    EventsMedia(),
+    UserProfilePage(), 
   ];
 
   void _onItemTapped(int index) {
@@ -32,7 +32,7 @@ class _UserPageState extends State<UserPage> {
     return Scaffold(
       body: Center(
         child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),  // Duration of the transition
+          duration: Duration(milliseconds: 300), 
           transitionBuilder: (Widget child, Animation<double> animation) {
             return FadeTransition(
               opacity: animation,
