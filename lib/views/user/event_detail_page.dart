@@ -106,7 +106,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
   Future<void> _initUserName() async {
     String name = await _fetchUserFullName();
     setState(() {
-      currUserName = name;  // Set state here to rebuild UI with the username once it's fetched
+      currUserName = name;  
     });
   }
 
@@ -130,22 +130,22 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   void _showReservationDialog(String seatId, String documentId, List<dynamic> participants, DateTime eventDate) {
-    // Check if the event is in the past
+    
     if (eventDate.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.alreadyTakenPlace))
       );
-      return; // Exit as the event is expired
+      return; 
     }
 
-    // Check if the current user has already reserved a seat
+    
     bool hasReserved = participants.any((participant) => participant['name'] == currUserName);
 
     if (hasReserved) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.reservationDialog))
       );
-      return; // Exit if the user has already reserved a seat
+      return; 
     }
 
     showDialog(
@@ -164,7 +164,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
             TextButton(
               child: Text(AppLocalizations.of(context)!.confirm),
               onPressed: () {
-                _reserveSeat(seatId, documentId, eventDate); // Pass the event date to the reserve function
+                _reserveSeat(seatId, documentId, eventDate); 
                 Navigator.of(context).pop();
               },
             ),
@@ -211,7 +211,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
           return Center(child: CircularProgressIndicator());
         }
 
-        // Update the participants list from the snapshot
+        
         var data = snapshot.data!.data() as Map<String, dynamic>;
         participants = data['participants'] as List<dynamic>;
 
