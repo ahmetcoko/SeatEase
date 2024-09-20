@@ -17,13 +17,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 3), // Duration of the rotation
+      duration: const Duration(seconds: 3),
       vsync: this,
-    )..repeat(); // This causes the animation to repeat indefinitely
+    )..repeat(); 
 
     _animation = CurvedAnimation(
       parent: _controller!,
-      curve: Curves.linear, // Use a linear curve for constant rotation speed
+      curve: Curves.linear, 
     );
 
     _navigateToHome();
@@ -32,19 +32,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   _navigateToHome() async {
     await Future.delayed(Duration(seconds: 3), () {});
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-    _controller?.stop(); // Stop the animation when navigating away
+    _controller?.stop(); 
   }
 
   @override
   void dispose() {
-    _controller?.dispose(); // Properly dispose the controller
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Set a grey background
+      backgroundColor: Colors.grey[50], 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,11 +53,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               turns: _animation!,
               child: Image.asset(
                 'assets/images/launcher.png',
-                width: 100, // Set a specific size for the image
+                width: 100, 
                 height: 100,
               ),
             ),
-            SizedBox(height: 30), // Space between the image and the text
+            SizedBox(height: 30), 
             Text(
               'SeatEase',
               style: TextStyle(
