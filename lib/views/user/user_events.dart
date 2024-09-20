@@ -23,18 +23,13 @@ class _UserEventsPageState extends State<UserEventsPage> {
   Map<DateTime, List<dynamic>> _events = {};
   CalendarFormat calendarFormat = CalendarFormat.month;
   String currUserName = '';
-  bool isDataLoaded = false;  // Flag to check if data is loaded
-  bool showContent = false; // Added flag to control visibility of content
-  bool isLoadingCards = false; // Added flag to control visibility of loading cards
+  bool isDataLoaded = false;  
+  bool showContent = false; 
+  bool isLoadingCards = false; 
   final TextEditingController _searchController = TextEditingController();
   String searchTerm = '';
 
-  /// TODO: BAK
-  /*@override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-  }*/
+  
 
   @override
   void initState() {
@@ -48,9 +43,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
     });
 
 
-    // Request notification permission on page load
-    // Add a timer to delay the display of content
-    Timer(Duration(milliseconds: 600), () { //timer artırdım
+    Timer(Duration(milliseconds: 600), () { 
       if (mounted) {
         setState(() {
           showContent = true;
@@ -68,16 +61,16 @@ class _UserEventsPageState extends State<UserEventsPage> {
   Future<void> _initUserName() async {
     String name = await _fetchUserFullName();
     setState(() {
-      currUserName = name;  // Set state here to rebuild UI with the username once it's fetched
+      currUserName = name;  
     });
   }
 
   Future<void> _initPage() async {
     await _initUserName();
     _events = ModalRoute.of(context)!.settings.arguments as Map<DateTime, List<dynamic>>;
-    // Ensure all data is loaded before setting the state
+    
     setState(() {
-      isDataLoaded = true;  // Set the data loaded flag to true after all data is fetched
+      isDataLoaded = true;  
     });
   }
 
@@ -109,14 +102,14 @@ class _UserEventsPageState extends State<UserEventsPage> {
     setState(() {
       isCalendarVisible = !isCalendarVisible;
       if (!isCalendarVisible) {
-        selectedDay = null; // Reset the selected day when the calendar is closed
+        selectedDay = null; 
       }
       if (isCalendarVisible) {
-        isLoadingCards = true; // Set loading to true when calendar is toggled
-        Future.delayed(Duration(milliseconds: 500), () { // Adjust duration to match your calendar animation time
+        isLoadingCards = true; 
+        Future.delayed(Duration(milliseconds: 500), () { 
           if (mounted) {
             setState(() {
-              isLoadingCards = false; // Set loading to false after the delay
+              isLoadingCards = false;
             });
           }
         });
@@ -146,13 +139,13 @@ class _UserEventsPageState extends State<UserEventsPage> {
         ],
       ),
       body: !isDataLoaded
-          ? Center(child: CircularProgressIndicator())  // Show a full-screen loader if data is not yet loaded
+          ? Center(child: CircularProgressIndicator())  
           : AnimatedOpacity(
         opacity: showContent ? 1.0 : 0.0,
         duration: Duration(milliseconds: 2000),
         onEnd: () {
           if (!showContent) {
-            // Only update the state to show content once the animation has completed, preventing premature visibility
+            
             setState(() {
               showContent = true;
             });
@@ -160,7 +153,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
         },
         child: Column(
           children: [
-            if (isCalendarVisible) // Only display the calendar if toggled
+            if (isCalendarVisible) 
               TableCalendar(
                 firstDay: DateTime.utc(2010, 1, 1),
                 lastDay: DateTime.utc(2030, 12, 31),
@@ -202,7 +195,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                         ),
                       );
                     } else {
-                      return null; // Use default style
+                      return null; 
                     }
                   },
                 ),
@@ -228,8 +221,8 @@ class _UserEventsPageState extends State<UserEventsPage> {
               child: FutureBuilder<String>(
                 future: _fetchUserFullName(),
                 builder: (context, snapshot) {
-                  // Display loading indicator until user's name is fetched
-                  if (snapshot.connectionState == ConnectionState.waiting || isLoadingCards) { //son eklenen isLoadingCards
+                  
+                  if (snapshot.connectionState == ConnectionState.waiting || isLoadingCards) { 
                     return Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError || snapshot.data == "Unknown User") {
@@ -245,7 +238,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                         .orderBy('time')
                         .snapshots(),
                     builder: (context, eventSnapshot) {
-                      // Display loading indicator until event data is streamed
+                      
                       if (eventSnapshot.hasError) {
                         return Text('Something went wrong');
                       }
@@ -261,7 +254,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                           DateTime eventDate = (data['time'] as Timestamp).toDate();
 
                           if (searchTerm.isNotEmpty && !data['description'].toString().contains(searchTerm)) {
-                            return Container(); // Skip this event if it doesn't match the search term
+                            return Container(); 
                           }
 
                           return Card(
@@ -311,7 +304,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
                                   },
                                   child: Text(
                                     AppLocalizations.of(context)!.reserveSeat,
-                                    style: TextStyle(color: Colors.pinkAccent), // Apply pinkAccent color to the text
+                                    style: TextStyle(color: Colors.pinkAccent),
                                   ),
                                 ),
                               ],
@@ -334,22 +327,22 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
 
   void _showReservationDialog(String seatId, String documentId, List<dynamic> participants, DateTime eventDate) {
-    // Check if the event is in the past
+    
     if (eventDate.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("This event has already taken place and cannot be reserved."))
       );
-      return; // Exit as the event is expired
+      return; 
     }
 
-    // Check if the current user has already reserved a seat
+    
     bool hasReserved = participants.any((participant) => participant['name'] == currUserName);
 
     if (hasReserved) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("You have already reserved a seat for this event."))
       );
-      return; // Exit if the user has already reserved a seat
+      return;
     }
 
     showDialog(
@@ -368,7 +361,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
             TextButton(
               child: Text(AppLocalizations.of(context)!.confirm),
               onPressed: () {
-                _reserveSeat(seatId, documentId, eventDate); // Pass the event date to the reserve function
+                _reserveSeat(seatId, documentId, eventDate); 
                 Navigator.of(context).pop();
               },
             ),
@@ -379,7 +372,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
   }
 
   void _reserveSeat(String seatId, String documentId, DateTime eventDate) {
-    // Prevent reservation if the event is in the past
+    
     if (eventDate.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.alreadyTakenPlace))
@@ -387,7 +380,7 @@ class _UserEventsPageState extends State<UserEventsPage> {
       return;
     }
 
-    // Proceed with reserving the seat
+    
     FirebaseFirestore.instance.collection('Events').doc(documentId).update({
       'participants': FieldValue.arrayUnion([
         {'name': currUserName, 'seat': seatId}
@@ -408,9 +401,9 @@ class _UserEventsPageState extends State<UserEventsPage> {
 
 
   Widget _buildSeatGrid(int rows, int columns, List<dynamic> participants, String documentId, DateTime eventDate) {
-    // Create a set of occupied seats for quick lookup
+    
     Set<String> occupiedSeats = participants.map<String>((participant) {
-      return participant['seat'] as String;  // Make sure 'seat' is a string and corresponds to your seat naming convention
+      return participant['seat'] as String;  
     }).toSet();
 
     return GridView.builder(
@@ -424,11 +417,11 @@ class _UserEventsPageState extends State<UserEventsPage> {
       itemBuilder: (context, index) {
         int row = index ~/ columns;
         int col = index % columns;
-        String seatId = String.fromCharCode(65 + row) + (col + 1).toString(); // Generates seat ID like "A1", "A2", ...
+        String seatId = String.fromCharCode(65 + row) + (col + 1).toString(); 
 
-        // Determine if the seat is occupied
+        
         bool isOccupied = occupiedSeats.contains(seatId);
-        // Now pass eventDate to the _buildSeat
+        
         return _buildSeat(row, col, isOccupied, documentId, seatId, participants, eventDate);
       },
     );
