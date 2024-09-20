@@ -39,16 +39,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ElevatedButton(
                 onPressed: _sendResetEmail,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor, // Use the primary color from your theme
+                  backgroundColor: Theme.of(context).primaryColor, 
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50), // Rounded corners
+                    borderRadius: BorderRadius.circular(50), 
                   ),
-                  minimumSize: Size(150, 50), // Minimum size
+                  minimumSize: Size(150, 50), 
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.sendResetMail,
                   style: TextStyle(
-                    color: Colors.pinkAccent, // Ensure text color is pinkAccent
+                    color: Colors.pinkAccent, 
                   ),
                 ),
               )
